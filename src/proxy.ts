@@ -17,13 +17,13 @@ export async function proxy(request: NextRequest) {
   return NextResponse.next();
 }
 
-// export const config = {
-//   matcher: [
-//     "/create-event/:path*",
-//     "/manage-events/:path*",
-//     "/joined-events/:path*",
-//     "/profile/:path*",
-//     "/certificates/:path*",
-//     "/dashboard/:path*",
-//   ],
-// };
+export const config = {
+  matcher: [
+    "/create-event/:path*",
+    "/manage-events/:path*",
+    "/joined-events/:path*",
+    "/profile/:path*",
+    "/certificates/:path*",
+    "/dashboard/:path*",
+  ],
+};
