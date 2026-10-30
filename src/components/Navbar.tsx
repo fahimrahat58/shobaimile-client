@@ -54,20 +54,26 @@ export default function Navbar() {
                   </DropdownMenuTrigger>
 
                   <DropdownMenuContent align="end" className="w-48">
-                    <DropdownMenuItem asChild>
-                      <Link href="/profile">Profile</Link>
+                    <DropdownMenuItem onSelect={() => router.push("/profile")}>
+                      Profile
                     </DropdownMenuItem>
 
-                    <DropdownMenuItem asChild>
-                      <Link href="/create-event">Create Event</Link>
+                    <DropdownMenuItem
+                      onSelect={() => router.push("/create-event")}
+                    >
+                      Create Event
                     </DropdownMenuItem>
 
-                    <DropdownMenuItem asChild>
-                      <Link href="/manage-events">Manage Events</Link>
+                    <DropdownMenuItem
+                      onSelect={() => router.push("/manage-events")}
+                    >
+                      Manage Events
                     </DropdownMenuItem>
 
-                    <DropdownMenuItem asChild>
-                      <Link href="/joined-events">Joined Events</Link>
+                    <DropdownMenuItem
+                      onSelect={() => router.push("/joined-events")}
+                    >
+                      Joined Events
                     </DropdownMenuItem>
 
                     <DropdownMenuSeparator />
