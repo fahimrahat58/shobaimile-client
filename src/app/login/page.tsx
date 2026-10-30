@@ -38,6 +38,17 @@ export default function LoginPage() {
     }
   };
 
+  const handleGoogleLogin = async () => {
+    try {
+      await authClient.signIn.social({
+        provider: "google",
+        callbackURL: "/",
+      });
+    } catch {
+      toast.error("Google login failed. Please try again.");
+    }
+  };
+
   return (
     <main className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-10">
       <div className="w-full max-w-md rounded-xl bg-white p-8 shadow-sm">
@@ -89,6 +100,25 @@ export default function LoginPage() {
             {loading ? "Logging in..." : "Login"}
           </button>
         </form>
+
+        <div className="relative py-2">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t" />
+          </div>
+          <div className="relative flex justify-center">
+            <span className="bg-white px-3 text-sm text-gray-500">
+              Or continue with
+            </span>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          onClick={handleGoogleLogin}
+          className="w-full rounded-md border px-4 py-2.5 font-medium text-gray-700 hover:bg-gray-50"
+        >
+          Continue with Google
+        </button>
 
         <p className="mt-5 text-center text-sm text-gray-600">
           Don&apos;t have an account?{" "}
