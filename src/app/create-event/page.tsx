@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
@@ -12,6 +12,7 @@ export default function CreateEventPage() {
   const router = useRouter();
 
   const [loading, setLoading] = useState(false);
+  const [minDate, setMinDate] = useState("");
 
   const [formData, setFormData] = useState({
     title: "",
@@ -22,12 +23,32 @@ export default function CreateEventPage() {
     eventDate: "",
   });
 
+  // Set tomorrow as the minimum selectable date
+  useEffect(() => {
+    const date = new Date();
+
+    date.setDate(date.getDate() + 1);
+
+    const tomorrow = [
+      date.getFullYear(),
+      String(date.getMonth() + 1).padStart(2, "0"),
+      String(date.getDate()).padStart(2, "0"),
+    ].join("-");
+
+    setMinDate(tomorrow);
+  }, []);
+
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
     >,
   ) => {
     const { name, value } = e.target;
+
+    if (name === "eventDate" && minDate && value < minDate) {
+      toast.error("Please select a future date");
+      return;
+    }
 
     setFormData((prev) => ({
       ...prev,
@@ -37,6 +58,17 @@ export default function CreateEventPage() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    // Validate event date
+    if (!minDate || !formData.eventDate) {
+      toast.error("Please select an event date");
+      return;
+    }
+
+    if (formData.eventDate < minDate) {
+      toast.error("Only future dates are allowed!");
+      return;
+    }
 
     if (!API_URL) {
       toast.error("API URL is not configured");
@@ -94,6 +126,7 @@ export default function CreateEventPage() {
   return (
     <main className="min-h-screen bg-gray-50 px-4 py-12">
       <div className="mx-auto max-w-3xl">
+        {/* Header */}
         <div className="mb-8 text-center">
           <span className="font-semibold text-cyan-700">MAKE A DIFFERENCE</span>
 
@@ -110,6 +143,7 @@ export default function CreateEventPage() {
           onSubmit={handleSubmit}
           className="space-y-6 rounded-2xl border border-gray-100 bg-white p-6 shadow-sm md:p-8"
         >
+          {/* Event Title */}
           <div>
             <label className="mb-2 block text-sm font-semibold text-gray-700">
               Event Title
@@ -127,6 +161,7 @@ export default function CreateEventPage() {
             />
           </div>
 
+          {/* Description */}
           <div>
             <label className="mb-2 block text-sm font-semibold text-gray-700">
               Description
@@ -144,6 +179,7 @@ export default function CreateEventPage() {
             />
           </div>
 
+          {/* Category */}
           <div>
             <label className="mb-2 block text-sm font-semibold text-gray-700">
               Event Category
@@ -167,6 +203,7 @@ export default function CreateEventPage() {
             </select>
           </div>
 
+          {/* Image URL */}
           <div>
             <label className="mb-2 block text-sm font-semibold text-gray-700">
               Event Image URL
@@ -183,6 +220,7 @@ export default function CreateEventPage() {
             />
           </div>
 
+          {/* Location */}
           <div>
             <label className="mb-2 block text-sm font-semibold text-gray-700">
               Event Location
@@ -200,6 +238,7 @@ export default function CreateEventPage() {
             />
           </div>
 
+          {/* Event Date */}
           <div>
             <label className="mb-2 flex items-center gap-2 text-sm font-semibold text-gray-700">
               <CalendarDays size={17} />
@@ -211,14 +250,21 @@ export default function CreateEventPage() {
               name="eventDate"
               value={formData.eventDate}
               onChange={handleChange}
+              min={minDate}
               required
-              className="w-full rounded-lg border border-gray-200 px-4 py-3 outline-none focus:border-cyan-600"
+              disabled={!minDate}
+              className="w-full rounded-lg border border-gray-200 px-4 py-3 outline-none focus:border-cyan-600 disabled:cursor-not-allowed disabled:bg-gray-100"
             />
+
+            <p className="mt-2 text-xs text-gray-500">
+              Only tomorrow and future dates are allowed.
+            </p>
           </div>
 
+          {/* Submit Button */}
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading || !minDate}
             className="flex w-full items-center justify-center gap-2 rounded-lg bg-cyan-600 px-6 py-3 font-semibold text-white transition hover:bg-cyan-700 disabled:cursor-not-allowed disabled:opacity-60"
           >
             {loading ? (
