@@ -1,5 +1,10 @@
+
 import Link from "next/link";
-import { CalendarDays, MapPin, ArrowRight } from "lucide-react";
+import {
+  CalendarDays,
+  MapPin,
+  ArrowRight,
+} from "lucide-react";
 
 const events = [
   {
@@ -8,7 +13,8 @@ const events = [
     category: "Cleanup",
     date: "November 15, 2026",
     location: "Dhaka, Bangladesh",
-    image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800",
+    image:
+      "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800",
   },
   {
     id: "2",
@@ -16,7 +22,8 @@ const events = [
     category: "Plantation",
     date: "November 20, 2026",
     location: "Chattogram, Bangladesh",
-    image: "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=800",
+    image:
+      "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=800",
   },
   {
     id: "3",
@@ -24,7 +31,8 @@ const events = [
     category: "Donation",
     date: "November 25, 2026",
     location: "Sylhet, Bangladesh",
-    image: "https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?w=800",
+    image:
+      "https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?w=800",
   },
 ];
 

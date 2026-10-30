@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { HeartHandshake, Facebook, Instagram, Github } from "lucide-react";
+import { HeartHandshake, UsersRound, Camera, Code2 } from "lucide-react";
 
 export default function Footer() {
   return (
@@ -70,28 +70,28 @@ export default function Footer() {
               aria-label="Facebook"
               className="rounded-lg bg-gray-800 p-3 hover:bg-cyan-700"
             >
-              <Facebook size={19} />
+              <UsersRound size={19} />
             </a>
             <a
               href="#"
               aria-label="Instagram"
               className="rounded-lg bg-gray-800 p-3 hover:bg-cyan-700"
             >
-              <Instagram size={19} />
+              <Camera size={19} />
             </a>
             <a
               href="#"
               aria-label="GitHub"
               className="rounded-lg bg-gray-800 p-3 hover:bg-cyan-700"
             >
-              <Github size={19} />
+              <Code2 size={19} />
             </a>
           </div>
         </div>
       </div>
 
       <div className="border-t border-gray-800 px-4 py-6 text-center text-sm text-gray-500">
-        © {new Date().getFullYear()} ShobaiMile. All rights reserved.
+        © 2026 ShobaiMile. All rights reserved.
       </div>
     </footer>
   );
