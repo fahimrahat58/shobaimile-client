@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { CalendarDays, MapPin, ArrowRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 
 interface Event {
   _id: string;
@@ -126,15 +125,13 @@ export default function EventsPage() {
                     <span className="line-clamp-1">{event.location}</span>
                   </div>
 
-                  <Button
-                    asChild
-                    className="w-full bg-teal-600 hover:bg-teal-700"
+                  <Link
+                    href={`/events/${event._id}`}
+                    className="inline-flex h-10 w-full items-center justify-center rounded-md bg-teal-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-teal-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:ring-offset-2"
                   >
-                    <Link href={`/events/${event._id}`}>
-                      View Details
-                      <ArrowRight className="ml-2 h-4 w-4" />
-                    </Link>
-                  </Button>
+                    View Details
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Link>
                 </div>
               </article>
             ))}

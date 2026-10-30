@@ -1,6 +1,12 @@
 "use client";
 
-import { useCallback, useEffect, useState, type FormEvent } from "react";
+import {
+  useCallback,
+  useEffect,
+  useState,
+  type FormEvent,
+  type ChangeEvent,
+} from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { authClient } from "@/lib/auth-client";
@@ -13,6 +19,11 @@ import {
   Loader2,
   Plus,
   X,
+  Users,
+  CheckCircle2,
+  Award,
+  Clock,
+  Mail,
 } from "lucide-react";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -26,6 +37,16 @@ interface Event {
   location: string;
   eventDate: string;
   creatorEmail: string;
+}
+
+interface Participant {
+  email: string;
+  name: string;
+  image: string;
+  joinedAt: string;
+  verified: boolean;
+  volunteerHours: number;
+  totalPoints: number;
 }
 
 const initialFormData = {
@@ -42,14 +63,25 @@ export default function ManageEventsPage() {
 
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
+
   const [editingEvent, setEditingEvent] = useState<Event | null>(null);
   const [formData, setFormData] = useState(initialFormData);
   const [saving, setSaving] = useState(false);
+
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [confirmingDeleteId, setConfirmingDeleteId] = useState<string | null>(
     null,
   );
 
+  // Participants states
+  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
+  const [participants, setParticipants] = useState<Participant[]>([]);
+  const [participantsLoading, setParticipantsLoading] = useState(false);
+
+  const [hoursInput, setHoursInput] = useState<Record<string, string>>({});
+  const [verifyingEmail, setVerifyingEmail] = useState<string | null>(null);
+
+  // Get authentication token
   const getToken = useCallback(async () => {
     const tokenResult = await authClient.token();
     const token = tokenResult.data?.token;
@@ -61,6 +93,7 @@ export default function ManageEventsPage() {
     return token;
   }, []);
 
+  // Fetch own events
   const fetchEvents = useCallback(async () => {
     try {
       setLoading(true);
@@ -103,6 +136,7 @@ export default function ManageEventsPage() {
     fetchEvents();
   }, [fetchEvents]);
 
+  // Open edit dialog
   const openEditDialog = (event: Event) => {
     setEditingEvent(event);
 
@@ -116,15 +150,17 @@ export default function ManageEventsPage() {
     });
   };
 
+  // Close edit dialog
   const closeEditDialog = () => {
+    if (saving) return;
+
     setEditingEvent(null);
     setFormData(initialFormData);
   };
 
+  // Handle form changes
   const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >,
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
   ) => {
     const { name, value } = e.target;
 
@@ -134,10 +170,14 @@ export default function ManageEventsPage() {
     }));
   };
 
+  // Update event
   const handleUpdate = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!editingEvent || !API_URL) return;
+    if (!editingEvent || !API_URL) {
+      toast.error("Unable to update event");
+      return;
+    }
 
     try {
       setSaving(true);
@@ -164,7 +204,9 @@ export default function ManageEventsPage() {
 
       toast.success("Event updated successfully");
 
-      closeEditDialog();
+      setEditingEvent(null);
+      setFormData(initialFormData);
+
       await fetchEvents();
     } catch (error) {
       toast.error(
@@ -175,6 +217,7 @@ export default function ManageEventsPage() {
     }
   };
 
+  // Delete event
   const handleDelete = async (id: string) => {
     if (!API_URL) {
       toast.error("API URL is not configured");
@@ -212,6 +255,125 @@ export default function ManageEventsPage() {
     }
   };
 
+  // Fetch event participants
+  const fetchParticipants = async (event: Event) => {
+    if (!API_URL) {
+      toast.error("API URL is not configured");
+      return;
+    }
+
+    setSelectedEvent(event);
+    setParticipants([]);
+    setHoursInput({});
+
+    try {
+      setParticipantsLoading(true);
+
+      const token = await getToken();
+
+      const response = await fetch(
+        `${API_URL}/api/events/${event._id}/participants`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          cache: "no-store",
+        },
+      );
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.message || "Failed to load participants");
+      }
+
+      setParticipants(result.participants || []);
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "Failed to load participants",
+      );
+    } finally {
+      setParticipantsLoading(false);
+    }
+  };
+
+  // Close participants modal
+  const closeParticipantsModal = () => {
+    if (verifyingEmail) return;
+
+    setSelectedEvent(null);
+    setParticipants([]);
+    setHoursInput({});
+  };
+
+  // Handle volunteer hours input
+  const handleHoursChange = (email: string, value: string) => {
+    setHoursInput((prev) => ({
+      ...prev,
+      [email]: value,
+    }));
+  };
+
+  // Verify volunteer attendance
+  const handleVerifyAttendance = async (userEmail: string) => {
+    if (!selectedEvent || !API_URL) {
+      toast.error("Unable to verify attendance");
+      return;
+    }
+
+    const hours = Number(hoursInput[userEmail]);
+
+    if (!Number.isFinite(hours) || hours <= 0 || hours > 24) {
+      toast.error("Enter volunteer hours between 1 and 24");
+      return;
+    }
+
+    try {
+      setVerifyingEmail(userEmail);
+
+      const token = await getToken();
+
+      const response = await fetch(
+        `${API_URL}/api/events/${selectedEvent._id}/verify-participant`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            userEmail,
+            volunteerHours: hours,
+          }),
+        },
+      );
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.message || "Failed to verify attendance");
+      }
+
+      toast.success(
+        `Attendance verified! ${result.totalPoints ?? result.record?.totalPoints ?? ""} points awarded.`,
+      );
+
+      setHoursInput((prev) => ({
+        ...prev,
+        [userEmail]: "",
+      }));
+
+      // Refresh participant list
+      await fetchParticipants(selectedEvent);
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "Failed to verify attendance",
+      );
+    } finally {
+      setVerifyingEmail(null);
+    }
+  };
+
   if (loading) {
     return (
       <main className="flex min-h-[70vh] items-center justify-center">
@@ -223,6 +385,7 @@ export default function ManageEventsPage() {
   return (
     <main className="min-h-screen bg-gray-50 px-4 py-12">
       <div className="mx-auto max-w-7xl">
+        {/* Page Header */}
         <div className="mb-10 flex flex-wrap items-center justify-between gap-4">
           <div>
             <span className="font-semibold text-cyan-700">
@@ -247,13 +410,16 @@ export default function ManageEventsPage() {
           </Link>
         </div>
 
+        {/* Total Events */}
         <div className="mb-8 rounded-xl border border-cyan-100 bg-cyan-50 p-5">
           <p className="text-sm text-cyan-800">Total Events Created</p>
+
           <p className="mt-1 text-3xl font-bold text-cyan-900">
             {events.length}
           </p>
         </div>
 
+        {/* Events List */}
         {events.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-gray-300 bg-white px-6 py-16 text-center">
             <CalendarDays size={48} className="mx-auto text-gray-400" />
@@ -281,6 +447,7 @@ export default function ManageEventsPage() {
                 key={event._id}
                 className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm"
               >
+                {/* Event Image */}
                 <div className="h-52 overflow-hidden bg-gray-100">
                   <img
                     src={event.image}
@@ -314,6 +481,7 @@ export default function ManageEventsPage() {
                     </p>
                   </div>
 
+                  {/* Delete Confirmation */}
                   {confirmingDeleteId === event._id ? (
                     <div className="mt-6 rounded-lg border border-red-100 bg-red-50 p-4">
                       <p className="text-sm font-medium text-red-800">
@@ -344,21 +512,33 @@ export default function ManageEventsPage() {
                       </div>
                     </div>
                   ) : (
-                    <div className="mt-6 flex gap-3">
-                      <button
-                        onClick={() => openEditDialog(event)}
-                        className="flex flex-1 items-center justify-center gap-2 rounded-lg border border-cyan-600 px-4 py-2.5 text-sm font-semibold text-cyan-700 transition hover:bg-cyan-50"
-                      >
-                        <Pencil size={16} />
-                        Edit
-                      </button>
+                    <div className="mt-6 space-y-3">
+                      {/* Edit and Delete */}
+                      <div className="flex gap-3">
+                        <button
+                          onClick={() => openEditDialog(event)}
+                          className="flex flex-1 items-center justify-center gap-2 rounded-lg border border-cyan-600 px-4 py-2.5 text-sm font-semibold text-cyan-700 transition hover:bg-cyan-50"
+                        >
+                          <Pencil size={16} />
+                          Edit
+                        </button>
 
+                        <button
+                          onClick={() => setConfirmingDeleteId(event._id)}
+                          className="flex flex-1 items-center justify-center gap-2 rounded-lg border border-red-200 px-4 py-2.5 text-sm font-semibold text-red-600 transition hover:bg-red-50"
+                        >
+                          <Trash2 size={16} />
+                          Delete
+                        </button>
+                      </div>
+
+                      {/* Manage Participants */}
                       <button
-                        onClick={() => setConfirmingDeleteId(event._id)}
-                        className="flex flex-1 items-center justify-center gap-2 rounded-lg border border-red-200 px-4 py-2.5 text-sm font-semibold text-red-600 transition hover:bg-red-50"
+                        onClick={() => fetchParticipants(event)}
+                        className="flex w-full items-center justify-center gap-2 rounded-lg bg-cyan-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-cyan-700"
                       >
-                        <Trash2 size={16} />
-                        Delete
+                        <Users size={17} />
+                        Manage Participants
                       </button>
                     </div>
                   )}
@@ -369,12 +549,14 @@ export default function ManageEventsPage() {
         )}
       </div>
 
+      {/* Edit Event Modal */}
       {editingEvent && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center overflow-y-auto bg-black/50 p-4">
           <div className="my-auto w-full max-w-2xl rounded-2xl bg-white p-6 shadow-xl md:p-8">
             <div className="mb-6 flex items-center justify-between">
               <div>
                 <h2 className="text-2xl font-bold text-gray-900">Edit Event</h2>
+
                 <p className="mt-1 text-sm text-gray-500">
                   Update your event information.
                 </p>
@@ -396,6 +578,7 @@ export default function ManageEventsPage() {
                 <label className="mb-2 block text-sm font-semibold text-gray-700">
                   Event Title
                 </label>
+
                 <input
                   name="title"
                   value={formData.title}
@@ -410,6 +593,7 @@ export default function ManageEventsPage() {
                 <label className="mb-2 block text-sm font-semibold text-gray-700">
                   Description
                 </label>
+
                 <textarea
                   name="description"
                   value={formData.description}
@@ -425,6 +609,7 @@ export default function ManageEventsPage() {
                 <label className="mb-2 block text-sm font-semibold text-gray-700">
                   Category
                 </label>
+
                 <select
                   name="category"
                   value={formData.category}
@@ -447,6 +632,7 @@ export default function ManageEventsPage() {
                 <label className="mb-2 block text-sm font-semibold text-gray-700">
                   Image URL
                 </label>
+
                 <input
                   type="url"
                   name="image"
@@ -461,6 +647,7 @@ export default function ManageEventsPage() {
                 <label className="mb-2 block text-sm font-semibold text-gray-700">
                   Location
                 </label>
+
                 <input
                   name="location"
                   value={formData.location}
@@ -475,6 +662,7 @@ export default function ManageEventsPage() {
                 <label className="mb-2 block text-sm font-semibold text-gray-700">
                   Event Date
                 </label>
+
                 <input
                   type="date"
                   name="eventDate"
@@ -512,6 +700,212 @@ export default function ManageEventsPage() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Participants Modal */}
+      {selectedEvent && (
+        <div className="fixed inset-0 z-[110] flex items-center justify-center overflow-y-auto bg-black/60 p-4">
+          <div className="my-auto max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-2xl bg-white p-5 shadow-2xl md:p-8">
+            {/* Modal Header */}
+            <div className="mb-6 flex items-start justify-between gap-4">
+              <div>
+                <div className="flex items-center gap-2 text-cyan-700">
+                  <Users size={20} />
+                  <span className="text-sm font-semibold">
+                    VOLUNTEER MANAGEMENT
+                  </span>
+                </div>
+
+                <h2 className="mt-2 text-2xl font-bold text-gray-900">
+                  Participants
+                </h2>
+
+                <p className="mt-1 text-sm text-gray-500">
+                  {selectedEvent.title}
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={closeParticipantsModal}
+                disabled={Boolean(verifyingEmail)}
+                aria-label="Close participants"
+                className="rounded-lg p-2 text-gray-500 hover:bg-gray-100"
+              >
+                <X size={22} />
+              </button>
+            </div>
+
+            {/* Participant Count */}
+            {!participantsLoading && (
+              <div className="mb-5 grid grid-cols-2 gap-3">
+                <div className="rounded-xl bg-cyan-50 p-4">
+                  <p className="text-sm text-cyan-700">Total Participants</p>
+                  <p className="mt-1 text-2xl font-bold text-cyan-900">
+                    {participants.length}
+                  </p>
+                </div>
+
+                <div className="rounded-xl bg-green-50 p-4">
+                  <p className="text-sm text-green-700">Verified</p>
+                  <p className="mt-1 text-2xl font-bold text-green-900">
+                    {participants.filter((p) => p.verified).length}
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {/* Loading */}
+            {participantsLoading ? (
+              <div className="flex min-h-48 items-center justify-center">
+                <Loader2 size={35} className="animate-spin text-cyan-600" />
+              </div>
+            ) : participants.length === 0 ? (
+              <div className="rounded-xl border border-dashed border-gray-300 py-12 text-center">
+                <Users size={40} className="mx-auto text-gray-400" />
+
+                <h3 className="mt-4 font-semibold text-gray-800">
+                  No Participants Yet
+                </h3>
+
+                <p className="mt-2 text-sm text-gray-500">
+                  Nobody has joined this event yet.
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {participants.map((participant) => (
+                  <div
+                    key={participant.email}
+                    className="rounded-xl border border-gray-200 p-4 transition hover:border-cyan-200"
+                  >
+                    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                      {/* Volunteer Information */}
+                      <div className="flex min-w-0 items-center gap-3">
+                        {participant.image ? (
+                          <img
+                            src={participant.image}
+                            alt={participant.name}
+                            className="h-12 w-12 shrink-0 rounded-full border border-gray-200 object-cover"
+                          />
+                        ) : (
+                          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-cyan-100 font-bold text-cyan-700">
+                            {participant.name?.charAt(0)?.toUpperCase() || "V"}
+                          </div>
+                        )}
+
+                        <div className="min-w-0">
+                          <h3 className="truncate font-semibold text-gray-900">
+                            {participant.name}
+                          </h3>
+
+                          <p className="mt-1 flex items-center gap-1 truncate text-xs text-gray-500">
+                            <Mail size={13} />
+                            {participant.email}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Verification Status */}
+                      <div className="shrink-0">
+                        {participant.verified ? (
+                          <span className="inline-flex items-center gap-1 rounded-full bg-green-100 px-3 py-2 text-xs font-semibold text-green-700">
+                            <CheckCircle2 size={15} />
+                            Verified
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1 rounded-full bg-yellow-100 px-3 py-2 text-xs font-semibold text-yellow-700">
+                            <Clock size={15} />
+                            Pending
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Verified Information */}
+                    {participant.verified ? (
+                      <div className="mt-4 flex flex-wrap gap-3 border-t border-gray-100 pt-4">
+                        <div className="flex items-center gap-2 rounded-lg bg-cyan-50 px-3 py-2 text-sm text-cyan-800">
+                          <Clock size={16} />
+                          {participant.volunteerHours} Hours
+                        </div>
+
+                        <div className="flex items-center gap-2 rounded-lg bg-purple-50 px-3 py-2 text-sm text-purple-800">
+                          <Award size={16} />
+                          {participant.totalPoints} Points
+                        </div>
+                      </div>
+                    ) : (
+                      /* Verify Attendance Form */
+                      <div className="mt-4 border-t border-gray-100 pt-4">
+                        <label className="mb-2 block text-sm font-semibold text-gray-700">
+                          Volunteer Hours
+                        </label>
+
+                        <div className="flex flex-col gap-3 sm:flex-row">
+                          <input
+                            type="number"
+                            min="1"
+                            max="24"
+                            step="0.5"
+                            placeholder="Enter hours (1-24)"
+                            value={hoursInput[participant.email] || ""}
+                            onChange={(e) =>
+                              handleHoursChange(
+                                participant.email,
+                                e.target.value,
+                              )
+                            }
+                            disabled={verifyingEmail === participant.email}
+                            className="w-full rounded-lg border border-gray-200 px-4 py-3 text-sm outline-none focus:border-cyan-600"
+                          />
+
+                          <button
+                            type="button"
+                            onClick={() =>
+                              handleVerifyAttendance(participant.email)
+                            }
+                            disabled={verifyingEmail === participant.email}
+                            className="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg bg-green-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-60"
+                          >
+                            {verifyingEmail === participant.email ? (
+                              <>
+                                <Loader2 size={17} className="animate-spin" />
+                                Verifying...
+                              </>
+                            ) : (
+                              <>
+                                <CheckCircle2 size={17} />
+                                Verify Attendance
+                              </>
+                            )}
+                          </button>
+                        </div>
+
+                        <p className="mt-2 text-xs text-gray-500">
+                          Verify only after confirming that the volunteer
+                          attended the event.
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Modal Footer */}
+            <div className="mt-6 flex justify-end border-t border-gray-100 pt-5">
+              <button
+                type="button"
+                onClick={closeParticipantsModal}
+                disabled={Boolean(verifyingEmail)}
+                className="rounded-lg border border-gray-200 px-5 py-2.5 text-sm font-semibold text-gray-700 transition hover:bg-gray-50 disabled:opacity-50"
+              >
+                Close
+              </button>
+            </div>
           </div>
         </div>
       )}

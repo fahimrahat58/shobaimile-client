@@ -5,7 +5,6 @@ import Link from "next/link";
 import { CalendarDays, MapPin, ArrowRight, Users } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
 interface Event {
@@ -29,11 +28,13 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL;
 export default function JoinedEventsPage() {
   const { data: session, isPending } = authClient.useSession();
 
+  // loading is derived from session and isPending
   const [events, setEvents] = useState<JoinedEvent[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [fetching, setFetching] = useState(false);
 
   useEffect(() => {
     const fetchJoinedEvents = async () => {
+      setFetching(true);
       try {
         const tokenResult = await authClient.token();
         const token = tokenResult.data?.token;
@@ -59,18 +60,19 @@ export default function JoinedEventsPage() {
         console.error(error);
         toast.error("Joined events load করা যায়নি");
       } finally {
-        setLoading(false);
+        setFetching(false);
       }
     };
 
     if (!isPending && session) {
       fetchJoinedEvents();
-    } else if (!isPending && !session) {
-      setLoading(false);
     }
+    // No setState for loading if !session
   }, [session, isPending]);
 
-  if (isPending || loading) {
+  const loading = isPending || (session && fetching);
+
+  if (loading) {
     return (
       <main className="min-h-screen bg-slate-50 px-4 py-16">
         <div className="mx-auto max-w-7xl">
@@ -95,9 +97,12 @@ export default function JoinedEventsPage() {
         <p className="mt-2 text-slate-600">
           তোমার Joined Events দেখতে Login করো।
         </p>
-        <Button asChild className="mt-5 bg-teal-600 hover:bg-teal-700">
-          <Link href="/login">Login</Link>
-        </Button>
+        <Link
+          href="/login"
+          className="mt-5 inline-flex h-10 items-center justify-center rounded-md bg-teal-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-teal-700"
+        >
+          Login
+        </Link>
       </main>
     );
   }
@@ -131,9 +136,12 @@ export default function JoinedEventsPage() {
               Explore upcoming events and join your first community activity.
             </p>
 
-            <Button asChild className="mt-6 bg-teal-600 hover:bg-teal-700">
-              <Link href="/events">Explore Events</Link>
-            </Button>
+            <Link
+              href="/events"
+              className="mt-6 inline-flex h-10 items-center justify-center rounded-md bg-teal-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-teal-700"
+            >
+              Explore Events
+            </Link>
           </div>
         ) : (
           <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
@@ -176,15 +184,13 @@ export default function JoinedEventsPage() {
                       <span className="line-clamp-1">{event.location}</span>
                     </div>
 
-                    <Button
-                      asChild
-                      className="w-full bg-teal-600 hover:bg-teal-700"
+                    <Link
+                      href={`/events/${event._id}`}
+                      className="inline-flex h-10 w-full items-center justify-center rounded-md bg-teal-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-teal-700"
                     >
-                      <Link href={`/events/${event._id}`}>
-                        View Details
-                        <ArrowRight className="ml-2 h-4 w-4" />
-                      </Link>
-                    </Button>
+                      View Details
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </Link>
                   </div>
                 </article>
               );

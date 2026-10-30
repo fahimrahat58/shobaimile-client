@@ -59,7 +59,8 @@ export default function Navbar() {
                   {session.user.name || "My Account"}
                 </DropdownMenuTrigger>
 
-                <DropdownMenuContent align="end" className="w-52">
+                <DropdownMenuContent align="end" className="w-56">
+                  {/* Existing Links */}
                   <DropdownMenuItem
                     className="cursor-pointer"
                     onClick={() => router.push("/profile")}
@@ -88,6 +89,31 @@ export default function Navbar() {
                     Joined Events
                   </DropdownMenuItem>
 
+                  {/* Impact & Achievement Links */}
+                  <DropdownMenuSeparator />
+
+                  <DropdownMenuItem
+                    className="cursor-pointer"
+                    onClick={() => router.push("/dashboard/impact")}
+                  >
+                    🏆 Impact Dashboard
+                  </DropdownMenuItem>
+
+                  <DropdownMenuItem
+                    className="cursor-pointer"
+                    onClick={() => router.push("/leaderboard")}
+                  >
+                    🥇 Leaderboard
+                  </DropdownMenuItem>
+
+                  <DropdownMenuItem
+                    className="cursor-pointer"
+                    onClick={() => router.push("/certificates")}
+                  >
+                    📜 My Certificates
+                  </DropdownMenuItem>
+
+                  {/* Logout */}
                   <DropdownMenuSeparator />
 
                   <DropdownMenuItem
