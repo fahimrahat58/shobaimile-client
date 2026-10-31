@@ -29,6 +29,8 @@ export default function UpcomingEventsSection() {
         }
 
         const data = await response.json();
+
+        // Show maximum 6 upcoming events
         setEvents(data.events?.slice(0, 6) || []);
       } catch (error) {
         console.error("Upcoming events error:", error);
@@ -70,7 +72,7 @@ export default function UpcomingEventsSection() {
         {/* Loading Skeleton */}
         {loading ? (
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 lg:gap-7">
-            {Array.from({ length: 3 }).map((_, index) => (
+            {Array.from({ length: 6 }).map((_, index) => (
               <div
                 key={index}
                 className="h-80 animate-pulse rounded-2xl bg-gray-100 sm:h-96"
@@ -119,6 +121,7 @@ export default function UpcomingEventsSection() {
                     </h3>
 
                     <div className="mt-4 space-y-3 text-sm text-gray-600 sm:mt-5">
+                      {/* Event Date */}
                       <p className="flex items-start gap-2">
                         <CalendarDays
                           size={17}
@@ -137,6 +140,7 @@ export default function UpcomingEventsSection() {
                         </span>
                       </p>
 
+                      {/* Event Location */}
                       <p className="flex items-start gap-2">
                         <MapPin
                           size={17}
