@@ -117,31 +117,31 @@ export default function EventsPage() {
   );
 
   return (
-    <main className="min-h-screen bg-background px-4 py-16 text-foreground">
-      <div className="mx-auto max-w-7xl">
+    <main className="min-h-screen bg-background px-3 py-10 text-foreground sm:px-5 sm:py-14 lg:px-8 lg:py-16">
+      <div className="mx-auto w-full max-w-7xl">
         {/* Page Heading */}
-        <div className="mb-10 text-center">
-          <Badge className="mb-4 border-0 bg-teal-100 text-teal-700 hover:bg-teal-100 dark:bg-teal-950 dark:text-teal-300 dark:hover:bg-teal-950">
+        <div className="mb-8 text-center sm:mb-10">
+          <Badge className="mb-3 border-0 bg-teal-100 text-teal-700 hover:bg-teal-100 dark:bg-teal-950 dark:text-teal-300 dark:hover:bg-teal-950 sm:mb-4">
             Make a Difference
           </Badge>
 
-          <h1 className="text-3xl font-bold text-foreground md:text-5xl">
+          <h1 className="text-2xl font-bold leading-tight text-foreground sm:text-3xl md:text-5xl">
             Community Events
           </h1>
 
-          <p className="mx-auto mt-4 max-w-2xl text-muted-foreground">
+          <p className="mx-auto mt-3 max-w-2xl px-2 text-sm leading-6 text-muted-foreground sm:mt-4 sm:text-base sm:leading-7">
             Discover opportunities to help your community and create a positive
             impact together.
           </p>
         </div>
 
         {/* Categories */}
-        <div className="mb-8">
-          <h2 className="mb-4 text-lg font-semibold text-foreground">
+        <section className="mb-7 sm:mb-8">
+          <h2 className="mb-3 text-base font-semibold text-foreground sm:mb-4 sm:text-lg">
             Explore Categories
           </h2>
 
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-wrap gap-2 sm:gap-3">
             {categories.map((category) => {
               const isActive =
                 selectedCategory.toLowerCase() === category.toLowerCase();
@@ -150,7 +150,7 @@ export default function EventsPage() {
                 <button
                   key={category}
                   onClick={() => handleCategoryChange(category)}
-                  className={`rounded-full border px-5 py-2.5 text-sm font-medium transition ${
+                  className={`rounded-full border px-3 py-2 text-xs font-medium transition sm:px-5 sm:py-2.5 sm:text-sm ${
                     isActive
                       ? "border-teal-600 bg-teal-600 text-white shadow-sm hover:bg-teal-700"
                       : "border-border bg-card text-muted-foreground hover:border-teal-500 hover:text-teal-600 dark:hover:text-teal-300"
@@ -161,50 +161,50 @@ export default function EventsPage() {
               );
             })}
           </div>
-        </div>
+        </section>
 
         {/* Search and Add Event */}
-        <div className="mb-10 flex flex-col gap-4 sm:flex-row">
-          <div className="relative flex-1">
-            <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
+        <div className="mb-8 flex flex-col gap-3 sm:mb-10 sm:flex-row sm:gap-4">
+          <div className="relative min-w-0 flex-1">
+            <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground sm:left-4 sm:h-5 sm:w-5" />
 
             <input
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search events by title, location or category..."
-              className="h-12 w-full rounded-xl border border-border bg-card pl-12 pr-12 text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20"
+              className="h-11 w-full rounded-xl border border-border bg-card pl-10 pr-10 text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 sm:h-12 sm:pl-12 sm:pr-12"
             />
 
             {searchTerm && (
               <button
                 onClick={() => setSearchTerm("")}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground transition hover:text-foreground"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground transition hover:text-foreground sm:right-4"
                 aria-label="Clear search"
               >
-                <X className="h-5 w-5" />
+                <X className="h-4 w-4 sm:h-5 sm:w-5" />
               </button>
             )}
           </div>
 
           <Link
             href="/create-event"
-            className="inline-flex h-12 shrink-0 items-center justify-center gap-2 rounded-xl bg-teal-600 px-6 text-sm font-semibold text-white transition hover:bg-teal-700"
+            className="inline-flex h-11 w-full shrink-0 items-center justify-center gap-2 rounded-xl bg-teal-600 px-5 text-sm font-semibold text-white transition hover:bg-teal-700 sm:h-12 sm:w-auto sm:px-6"
           >
-            <Plus className="h-5 w-5" />
+            <Plus className="h-4 w-4 sm:h-5 sm:w-5" />
             Add Event
           </Link>
         </div>
 
         {/* Selected Category Info */}
         {selectedCategory !== "All" && (
-          <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+          <div className="mb-6 flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center">
             <div>
-              <h2 className="text-xl font-bold text-foreground">
+              <h2 className="text-lg font-bold text-foreground sm:text-xl">
                 {selectedCategory} Events
               </h2>
 
-              <p className="mt-1 text-sm text-muted-foreground">
+              <p className="mt-1 text-xs text-muted-foreground sm:text-sm">
                 Events from your selected category appear first.
               </p>
             </div>
@@ -220,21 +220,23 @@ export default function EventsPage() {
 
         {/* Event List */}
         {loading ? (
-          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 lg:gap-8">
             {Array.from({ length: 6 }).map((_, index) => (
               <div
                 key={index}
-                className="h-96 animate-pulse rounded-2xl border border-border bg-muted"
+                className="h-80 animate-pulse rounded-2xl border border-border bg-muted sm:h-96"
               />
             ))}
           </div>
         ) : error ? (
-          <p className="py-16 text-center text-red-500">{error}</p>
+          <p className="py-12 text-center text-sm text-red-500 sm:py-16 sm:text-base">
+            {error}
+          </p>
         ) : filteredEvents.length === 0 ? (
-          <div className="rounded-2xl border border-border bg-card py-20 text-center shadow-sm">
-            <CalendarDays className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
+          <div className="rounded-2xl border border-border bg-card px-4 py-12 text-center shadow-sm sm:px-6 sm:py-20">
+            <CalendarDays className="mx-auto mb-4 h-10 w-10 text-muted-foreground sm:h-12 sm:w-12" />
 
-            <h2 className="text-xl font-semibold text-card-foreground">
+            <h2 className="text-lg font-semibold text-card-foreground sm:text-xl">
               {searchTerm
                 ? "No Matching Events"
                 : selectedCategory !== "All" && !hasSelectedCategoryEvents
@@ -242,7 +244,7 @@ export default function EventsPage() {
                   : "No Upcoming Events"}
             </h2>
 
-            <p className="mt-2 text-muted-foreground">
+            <p className="mt-2 text-sm leading-6 text-muted-foreground">
               {searchTerm
                 ? "Try searching with a different keyword."
                 : "There are no events available right now. Check back later!"}
@@ -254,7 +256,7 @@ export default function EventsPage() {
                   setSearchTerm("");
                   handleCategoryChange("All");
                 }}
-                className="mt-5 inline-flex items-center gap-2 rounded-lg bg-teal-600 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-teal-700"
+                className="mt-5 inline-flex items-center gap-2 rounded-lg bg-teal-600 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-teal-700 sm:px-5"
               >
                 <X className="h-4 w-4" />
                 Clear Filters
@@ -263,8 +265,8 @@ export default function EventsPage() {
           </div>
         ) : (
           <>
-            <div className="mb-5 flex items-center justify-between">
-              <p className="text-sm text-muted-foreground">
+            <div className="mb-4 flex items-center justify-between sm:mb-5">
+              <p className="text-xs text-muted-foreground sm:text-sm">
                 Showing{" "}
                 <span className="font-semibold text-foreground">
                   {filteredEvents.length}
@@ -273,36 +275,38 @@ export default function EventsPage() {
               </p>
             </div>
 
-            <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 lg:gap-8">
               {filteredEvents.map((event) => (
                 <article
                   key={event._id}
-                  className="overflow-hidden rounded-2xl border border-border bg-card text-card-foreground shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+                  className="overflow-hidden rounded-2xl border border-border bg-card text-card-foreground shadow-sm transition hover:shadow-lg sm:hover:-translate-y-1"
                 >
-                  <div className="relative h-56 overflow-hidden">
+                  <div className="relative h-48 overflow-hidden sm:h-56">
                     <img
                       src={event.image}
                       alt={event.title}
                       className="h-full w-full object-cover transition duration-500 hover:scale-105"
                     />
 
-                    <Badge className="absolute left-4 top-4 border-0 bg-white text-teal-700 hover:bg-white dark:bg-slate-900 dark:text-teal-300 dark:hover:bg-slate-900">
+                    <Badge className="absolute left-3 top-3 max-w-[calc(100%-1.5rem)] border-0 bg-white text-teal-700 hover:bg-white dark:bg-slate-900 dark:text-teal-300 dark:hover:bg-slate-900 sm:left-4 sm:top-4">
                       {event.category}
                     </Badge>
                   </div>
 
-                  <div className="p-6">
-                    <div className="mb-3 flex items-center gap-2 text-sm text-teal-700 dark:text-teal-300">
-                      <CalendarDays className="h-4 w-4" />
+                  <div className="p-4 sm:p-6">
+                    <div className="mb-3 flex items-center gap-2 text-xs text-teal-700 dark:text-teal-300 sm:text-sm">
+                      <CalendarDays className="h-4 w-4 shrink-0" />
 
-                      {new Date(event.eventDate).toLocaleDateString("en-US", {
-                        day: "numeric",
-                        month: "long",
-                        year: "numeric",
-                      })}
+                      <span>
+                        {new Date(event.eventDate).toLocaleDateString("en-US", {
+                          day: "numeric",
+                          month: "long",
+                          year: "numeric",
+                        })}
+                      </span>
                     </div>
 
-                    <h2 className="mb-3 line-clamp-2 text-xl font-bold text-card-foreground">
+                    <h2 className="mb-3 line-clamp-2 text-lg font-bold text-card-foreground sm:text-xl">
                       {event.title}
                     </h2>
 
@@ -310,10 +314,12 @@ export default function EventsPage() {
                       {event.description}
                     </p>
 
-                    <div className="mb-5 flex items-center gap-2 text-sm text-muted-foreground">
+                    <div className="mb-5 flex min-w-0 items-center gap-2 text-sm text-muted-foreground">
                       <MapPin className="h-4 w-4 shrink-0 text-teal-600 dark:text-teal-300" />
 
-                      <span className="line-clamp-1">{event.location}</span>
+                      <span className="line-clamp-1 break-all">
+                        {event.location}
+                      </span>
                     </div>
 
                     <Link

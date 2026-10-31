@@ -131,7 +131,6 @@ export default function CertificatesPage() {
       link.click();
       link.remove();
 
-      // Release browser memory after download starts.
       setTimeout(() => {
         URL.revokeObjectURL(fileUrl);
       }, 1000);
@@ -147,46 +146,48 @@ export default function CertificatesPage() {
   // Session loading
   if (isPending || loading) {
     return (
-      <div className="flex min-h-[70vh] items-center justify-center">
+      <div className="flex min-h-[60vh] items-center justify-center px-4">
         <Loader2 className="h-8 w-8 animate-spin text-emerald-600" />
       </div>
     );
   }
 
   return (
-    <main className="min-h-screen bg-gray-50 px-4 py-10 sm:px-6 lg:px-10">
-      <div className="mx-auto max-w-7xl">
+    <main className="min-h-screen bg-gray-50 px-3 py-6 sm:px-6 sm:py-10 lg:px-10">
+      <div className="mx-auto w-full max-w-7xl">
         {/* Header */}
-        <div className="mb-8">
-          <p className="font-semibold text-emerald-600">ShobaiMile</p>
+        <div className="mb-6 sm:mb-8">
+          <p className="text-sm font-semibold text-emerald-600 sm:text-base">
+            ShobaiMile
+          </p>
 
-          <h1 className="mt-2 text-3xl font-bold text-gray-900">
+          <h1 className="mt-2 text-2xl font-bold text-gray-900 sm:text-3xl lg:text-4xl">
             My Certificates
           </h1>
 
-          <p className="mt-2 text-gray-500">
+          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-gray-500 sm:text-base">
             View and download your volunteering certificates.
           </p>
         </div>
 
         {/* Error */}
         {error && (
-          <div className="flex items-center gap-3 rounded-xl bg-red-50 p-4 text-red-600">
-            <AlertCircle className="h-5 w-5 shrink-0" />
-            <p>{error}</p>
+          <div className="flex items-start gap-3 rounded-xl bg-red-50 p-3 text-sm text-red-600 sm:p-4 sm:text-base">
+            <AlertCircle className="mt-0.5 h-5 w-5 shrink-0" />
+            <p className="min-w-0 break-words">{error}</p>
           </div>
         )}
 
         {/* Empty State */}
         {!error && certificates.length === 0 && (
-          <div className="rounded-2xl border border-gray-200 bg-white p-10 text-center shadow-sm">
-            <FileX className="mx-auto h-12 w-12 text-gray-300" />
+          <div className="rounded-2xl border border-gray-200 bg-white px-4 py-8 text-center shadow-sm sm:px-8 sm:py-12">
+            <FileX className="mx-auto h-10 w-10 text-gray-300 sm:h-12 sm:w-12" />
 
-            <h2 className="mt-4 text-xl font-bold text-gray-900">
+            <h2 className="mt-4 text-lg font-bold text-gray-900 sm:text-xl">
               No Certificates Yet
             </h2>
 
-            <p className="mt-2 text-gray-500">
+            <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-gray-500 sm:text-base">
               Complete a volunteer event and get your attendance verified to
               earn a certificate.
             </p>
@@ -195,16 +196,16 @@ export default function CertificatesPage() {
 
         {/* Certificates */}
         {!error && certificates.length > 0 && (
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 lg:gap-6 xl:grid-cols-4">
             {certificates.map((certificate) => (
-              <div key={certificate.certificateId}>
+              <div key={certificate.certificateId} className="min-w-0">
                 <CertificateCard
                   certificate={certificate}
                   onDownload={handleDownload}
                 />
 
                 {downloading === certificate.certificateId && (
-                  <p className="mt-2 text-center text-sm text-gray-500">
+                  <p className="mt-2 text-center text-xs text-gray-500 sm:text-sm">
                     Preparing your certificate...
                   </p>
                 )}

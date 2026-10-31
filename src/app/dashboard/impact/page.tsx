@@ -45,7 +45,7 @@ export default function ImpactPage() {
 
   if (loading) {
     return (
-      <div className="p-6 text-center text-gray-600">
+      <div className="flex min-h-[50vh] items-center justify-center px-4 text-center text-sm text-gray-600 sm:text-base">
         Loading your impact...
       </div>
     );
@@ -53,43 +53,60 @@ export default function ImpactPage() {
 
   if (error) {
     return (
-      <div className="m-6 rounded-xl bg-red-50 p-4 text-red-600">{error}</div>
+      <div className="mx-3 mt-6 rounded-xl bg-red-50 p-3 text-sm text-red-600 sm:mx-6 sm:p-4 sm:text-base lg:mx-10">
+        {error}
+      </div>
     );
   }
 
   if (!impact) {
-    return <p className="p-6 text-gray-600">No impact data found.</p>;
+    return (
+      <p className="px-4 py-6 text-center text-sm text-gray-600 sm:text-base">
+        No impact data found.
+      </p>
+    );
   }
 
   return (
-    <main className="min-h-screen bg-gray-50 px-4 py-10 sm:px-6 lg:px-10">
-      <div className="mx-auto max-w-7xl">
-        <div className="mb-8">
-          <p className="font-semibold text-emerald-600">ShobaiMile</p>
+    <main className="min-h-screen bg-gray-50 px-3 py-6 sm:px-6 sm:py-10 lg:px-10">
+      <div className="mx-auto w-full max-w-7xl">
+        {/* Header */}
+        <div className="mb-6 sm:mb-8">
+          <p className="text-sm font-semibold text-emerald-600 sm:text-base">
+            ShobaiMile
+          </p>
 
-          <h1 className="mt-2 text-3xl font-bold text-gray-900">
+          <h1 className="mt-2 text-2xl font-bold leading-tight text-gray-900 sm:text-3xl lg:text-4xl">
             My Impact Dashboard
           </h1>
 
-          <p className="mt-2 text-gray-500">
+          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-gray-500 sm:text-base">
             Track your volunteering journey and see the difference you make.
           </p>
         </div>
 
-        <ImpactStats
-          totalPoints={impact.totalPoints}
-          volunteerHours={impact.volunteerHours}
-          completedEvents={impact.completedEvents}
-        />
-
-        <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
-          <ImpactBadge badge={impact.badge} />
-
-          <ImpactProgress
+        {/* Impact Statistics */}
+        <div className="min-w-0">
+          <ImpactStats
             totalPoints={impact.totalPoints}
-            nextMilestone={impact.nextMilestone}
-            pointsToNextMilestone={impact.pointsToNextMilestone}
+            volunteerHours={impact.volunteerHours}
+            completedEvents={impact.completedEvents}
           />
+        </div>
+
+        {/* Badge and Progress */}
+        <div className="mt-5 grid min-w-0 grid-cols-1 gap-4 sm:mt-6 sm:gap-6 lg:grid-cols-2">
+          <div className="min-w-0">
+            <ImpactBadge badge={impact.badge} />
+          </div>
+
+          <div className="min-w-0">
+            <ImpactProgress
+              totalPoints={impact.totalPoints}
+              nextMilestone={impact.nextMilestone}
+              pointsToNextMilestone={impact.pointsToNextMilestone}
+            />
+          </div>
         </div>
       </div>
     </main>

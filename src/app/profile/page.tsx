@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useState } from "react";
@@ -12,7 +13,6 @@ import {
   ShieldCheck,
   Loader2,
   Pencil,
-  Eye,
 } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -176,7 +176,7 @@ export default function ProfilePage() {
   // Loading
   if (isPending || loading) {
     return (
-      <div className="flex min-h-[70vh] items-center justify-center">
+      <div className="flex min-h-[70vh] items-center justify-center px-4">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
@@ -185,7 +185,7 @@ export default function ProfilePage() {
   // Profile not found
   if (!profile) {
     return (
-      <div className="flex min-h-[70vh] flex-col items-center justify-center gap-4">
+      <div className="flex min-h-[70vh] flex-col items-center justify-center gap-4 px-4 text-center">
         <UserRound className="h-12 w-12 text-muted-foreground" />
 
         <h2 className="text-xl font-semibold">Profile not found</h2>
@@ -204,40 +204,52 @@ export default function ProfilePage() {
       .toUpperCase() || "U";
 
   return (
-    <main className="min-h-screen bg-background px-4 py-12">
+    <main className="min-h-screen bg-background px-3 py-7 sm:px-5 sm:py-10 lg:px-6 lg:py-12">
       <div className="mx-auto max-w-3xl">
         {/* Heading */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold">My Profile</h1>
+        <div className="mb-6 sm:mb-8">
+          <h1 className="text-2xl font-bold sm:text-3xl">
+            My Profile
+          </h1>
 
-          <p className="mt-2 text-muted-foreground">
+          <p className="mt-2 text-sm text-muted-foreground sm:text-base">
             Manage your personal information.
           </p>
         </div>
 
         {/* Profile Card */}
-        <div className="overflow-hidden rounded-2xl border bg-card shadow-sm">
+        <div className="overflow-hidden rounded-xl border bg-card shadow-sm sm:rounded-2xl">
           {/* Cover */}
-          <div className="h-36 bg-gradient-to-r from-primary/80 to-primary" />
+          <div className="h-24 bg-gradient-to-r from-primary/80 to-primary sm:h-32 md:h-36" />
 
-          <div className="px-6 pb-8">
+          <div className="px-4 pb-6 sm:px-6 sm:pb-8">
             {/* Avatar and Edit Button */}
-            <div className="-mt-14 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
-              <Avatar className="h-28 w-28 border-4 border-background">
-                <AvatarImage src={profile.image || ""} alt={profile.name} />
+            <div className="-mt-12 flex flex-col items-start justify-between gap-4 sm:-mt-14 sm:flex-row sm:items-end">
+              <Avatar className="h-24 w-24 border-4 border-background sm:h-28 sm:w-28">
+                <AvatarImage
+                  src={profile.image || ""}
+                  alt={profile.name}
+                />
 
-                <AvatarFallback className="text-2xl">{initials}</AvatarFallback>
+                <AvatarFallback className="text-xl sm:text-2xl">
+                  {initials}
+                </AvatarFallback>
               </Avatar>
 
-              <Button onClick={openEditDialog} className="gap-2">
+              <Button
+                onClick={openEditDialog}
+                className="w-full gap-2 sm:w-auto"
+              >
                 <Pencil className="h-4 w-4" />
                 Edit Profile
               </Button>
             </div>
 
             {/* Name */}
-            <div className="mt-5">
-              <h2 className="text-2xl font-bold">{profile.name}</h2>
+            <div className="mt-5 min-w-0">
+              <h2 className="break-words text-xl font-bold sm:text-2xl">
+                {profile.name}
+              </h2>
 
               <p className="mt-1 text-sm text-muted-foreground">
                 ShobaiMile Member
@@ -245,42 +257,53 @@ export default function ProfilePage() {
             </div>
 
             {/* Information */}
-            <div className="mt-8 space-y-5">
-              <div className="flex items-center gap-4 rounded-xl border p-4">
-                <div className="rounded-lg bg-primary/10 p-3">
+            <div className="mt-6 space-y-3 sm:mt-8 sm:space-y-5">
+              {/* Full Name */}
+              <div className="flex min-w-0 items-center gap-3 rounded-xl border p-3 sm:gap-4 sm:p-4">
+                <div className="shrink-0 rounded-lg bg-primary/10 p-2.5 sm:p-3">
                   <UserRound className="h-5 w-5 text-primary" />
                 </div>
 
-                <div>
-                  <p className="text-sm text-muted-foreground">Full Name</p>
+                <div className="min-w-0">
+                  <p className="text-xs text-muted-foreground sm:text-sm">
+                    Full Name
+                  </p>
 
-                  <p className="font-medium">{profile.name}</p>
+                  <p className="break-words text-sm font-medium sm:text-base">
+                    {profile.name}
+                  </p>
                 </div>
               </div>
 
-              <div className="flex items-center gap-4 rounded-xl border p-4">
-                <div className="rounded-lg bg-primary/10 p-3">
+              {/* Email */}
+              <div className="flex min-w-0 items-center gap-3 rounded-xl border p-3 sm:gap-4 sm:p-4">
+                <div className="shrink-0 rounded-lg bg-primary/10 p-2.5 sm:p-3">
                   <Mail className="h-5 w-5 text-primary" />
                 </div>
 
-                <div className="min-w-0">
-                  <p className="text-sm text-muted-foreground">Email Address</p>
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs text-muted-foreground sm:text-sm">
+                    Email Address
+                  </p>
 
-                  <p className="break-all font-medium">{profile.email}</p>
+                  <p className="break-all text-sm font-medium sm:text-base">
+                    {profile.email}
+                  </p>
                 </div>
               </div>
 
-              <div className="flex items-center gap-4 rounded-xl border p-4">
-                <div className="rounded-lg bg-primary/10 p-3">
+              {/* Email Verification */}
+              <div className="flex min-w-0 items-center gap-3 rounded-xl border p-3 sm:gap-4 sm:p-4">
+                <div className="shrink-0 rounded-lg bg-primary/10 p-2.5 sm:p-3">
                   <ShieldCheck className="h-5 w-5 text-primary" />
                 </div>
 
-                <div>
-                  <p className="text-sm text-muted-foreground">
+                <div className="min-w-0">
+                  <p className="text-xs text-muted-foreground sm:text-sm">
                     Email Verification
                   </p>
 
-                  <p className="font-medium">
+                  <p className="text-sm font-medium sm:text-base">
                     {profile.emailVerified ? "Verified" : "Not Verified"}
                   </p>
                 </div>
@@ -291,16 +314,18 @@ export default function ProfilePage() {
 
         {/* Edit Profile Dialog */}
         <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-          <DialogContent className="sm:max-w-md">
+          <DialogContent className="max-h-[90vh] w-[calc(100%-1rem)] overflow-y-auto rounded-xl p-4 sm:max-w-md sm:p-6">
             <DialogHeader>
-              <DialogTitle>Edit Profile</DialogTitle>
+              <DialogTitle className="text-lg sm:text-xl">
+                Edit Profile
+              </DialogTitle>
 
-              <DialogDescription>
+              <DialogDescription className="text-sm">
                 Update your name and profile picture.
               </DialogDescription>
             </DialogHeader>
 
-            <form onSubmit={handleUpdateProfile} className="space-y-5">
+            <form onSubmit={handleUpdateProfile} className="space-y-4 sm:space-y-5">
               {/* Name */}
               <div className="space-y-2">
                 <Label htmlFor="name">Full Name</Label>
@@ -326,7 +351,11 @@ export default function ProfilePage() {
                 <div className="relative">
                   <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
 
-                  <Input value={profile.email} disabled className="pl-10" />
+                  <Input
+                    value={profile.email}
+                    disabled
+                    className="pl-10"
+                  />
                 </div>
 
                 <p className="text-xs text-muted-foreground">
@@ -353,17 +382,22 @@ export default function ProfilePage() {
                 </div>
               </div>
 
-              <DialogFooter>
+              <DialogFooter className="flex-col-reverse gap-2 sm:flex-row sm:gap-2">
                 <Button
                   type="button"
                   variant="outline"
                   onClick={() => setIsEditOpen(false)}
                   disabled={saving}
+                  className="w-full sm:w-auto"
                 >
                   Cancel
                 </Button>
 
-                <Button type="submit" disabled={saving} className="gap-2">
+                <Button
+                  type="submit"
+                  disabled={saving}
+                  className="w-full gap-2 sm:w-auto"
+                >
                   {saving ? (
                     <>
                       <Loader2 className="h-4 w-4 animate-spin" />

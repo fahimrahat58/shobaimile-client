@@ -222,11 +222,11 @@ export default function EventDetailsContent() {
   // Loading State
   if (loading) {
     return (
-      <div className="min-h-screen animate-pulse bg-background px-4 py-10">
-        <div className="mx-auto max-w-6xl">
-          <div className="mb-6 h-5 w-40 rounded bg-muted" />
-          <div className="h-80 rounded-2xl bg-muted sm:h-[420px]" />
-          <div className="mt-6 h-40 rounded-2xl bg-muted" />
+      <div className="min-h-screen animate-pulse bg-background px-3 py-6 sm:px-6 sm:py-10">
+        <div className="mx-auto w-full max-w-6xl">
+          <div className="mb-5 h-5 w-36 rounded bg-muted sm:mb-6 sm:w-40" />
+          <div className="h-[240px] rounded-xl bg-muted sm:h-[360px] sm:rounded-2xl md:h-[420px]" />
+          <div className="mt-5 h-36 rounded-xl bg-muted sm:mt-6 sm:h-40 sm:rounded-2xl" />
         </div>
       </div>
     );
@@ -236,13 +236,16 @@ export default function EventDetailsContent() {
   if (error || !event) {
     return (
       <main className="flex min-h-[60vh] flex-col items-center justify-center bg-background px-4 text-center text-foreground">
-        <h2 className="text-2xl font-bold">Event Not Found</h2>
+        <h2 className="text-xl font-bold sm:text-2xl">Event Not Found</h2>
 
-        <p className="mt-3 max-w-md text-muted-foreground">
+        <p className="mt-3 max-w-md break-words text-sm text-muted-foreground sm:text-base">
           {error || "Even Not Found"}
         </p>
 
-        <Button onClick={() => router.push("/events")} className="mt-5">
+        <Button
+          onClick={() => router.push("/events")}
+          className="mt-5 w-full sm:w-auto"
+        >
           <ArrowLeft className="mr-2 h-4 w-4" />
           Back to Events
         </Button>
@@ -267,20 +270,20 @@ export default function EventDetailsContent() {
     : [];
 
   return (
-    <main className="min-h-screen bg-slate-50 px-3 py-5 text-slate-900 dark:bg-background dark:text-foreground sm:px-6 sm:py-8">
-      <div className="mx-auto max-w-6xl">
+    <main className="min-h-screen bg-slate-50 px-3 py-5 text-slate-900 dark:bg-background dark:text-foreground sm:px-6 sm:py-8 lg:px-10">
+      <div className="mx-auto w-full max-w-6xl">
         {/* Back Button */}
         <button
           onClick={() => router.push("/events")}
-          className="mb-5 flex items-center gap-2 text-xs font-medium text-slate-500 transition hover:text-teal-600"
+          className="mb-4 flex items-center gap-2 text-xs font-medium text-slate-500 transition hover:text-teal-600 sm:mb-5 sm:text-sm"
         >
-          <ArrowLeft className="h-3.5 w-3.5" />
+          <ArrowLeft className="h-3.5 w-3.5 shrink-0 sm:h-4 sm:w-4" />
           Back to Upcoming Events
         </button>
 
-        <article className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-border dark:bg-card">
+        <article className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm sm:rounded-2xl dark:border-border dark:bg-card">
           {/* Hero Section */}
-          <div className="relative h-[280px] overflow-hidden sm:h-[360px] md:h-[400px]">
+          <div className="relative h-[240px] overflow-hidden sm:h-[360px] md:h-[420px] lg:h-[460px]">
             {event.image ? (
               <img
                 src={event.image}
@@ -295,53 +298,53 @@ export default function EventDetailsContent() {
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-black/10" />
 
             {/* Category */}
-            <div className="absolute left-5 top-5">
-              <Badge className="border-0 bg-white px-3 py-1 text-xs font-semibold text-slate-800 hover:bg-white">
+            <div className="absolute left-3 top-3 sm:left-5 sm:top-5">
+              <Badge className="border-0 bg-white px-2.5 py-1 text-[10px] font-semibold text-slate-800 hover:bg-white sm:px-3 sm:text-xs">
                 <HandHeart className="mr-1.5 h-3.5 w-3.5 text-teal-600" />
                 {event.category}
               </Badge>
             </div>
 
             {/* Hero Information */}
-            <div className="absolute bottom-0 left-0 w-full p-5 sm:p-8">
-              <h1 className="max-w-3xl text-2xl font-extrabold text-white sm:text-3xl md:text-4xl">
+            <div className="absolute bottom-0 left-0 w-full p-3 sm:p-6 md:p-8">
+              <h1 className="max-w-3xl break-words text-xl font-extrabold text-white sm:text-3xl md:text-4xl lg:text-5xl">
                 {event.title}
               </h1>
 
-              <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs font-medium text-white/90">
-                <span className="flex items-center gap-1.5">
-                  <MapPin className="h-4 w-4 text-teal-400" />
-                  {event.location}
+              <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs font-medium text-white/90 sm:gap-x-5 sm:text-sm">
+                <span className="flex min-w-0 items-start gap-1.5 break-words">
+                  <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-teal-400" />
+                  <span className="break-words">{event.location}</span>
                 </span>
 
                 <span className="flex items-center gap-1.5">
-                  <CalendarDays className="h-4 w-4 text-teal-400" />
+                  <CalendarDays className="h-4 w-4 shrink-0 text-teal-400" />
                   {formattedDate}
                 </span>
               </div>
             </div>
           </div>
 
-          <div className="p-4 sm:p-7 md:p-8">
+          <div className="p-3 sm:p-6 md:p-8">
             {/* Volunteer Count and Join Bar */}
-            <div className="mb-8 flex flex-col gap-4 rounded-xl border border-slate-200 bg-slate-50 p-4 dark:border-border dark:bg-muted/30 sm:flex-row sm:items-center sm:justify-between sm:px-5">
-              <div className="flex items-center gap-3">
+            <div className="mb-6 flex flex-col gap-4 rounded-xl border border-slate-200 bg-slate-50 p-3 sm:mb-8 sm:flex-row sm:items-center sm:justify-between sm:p-4 md:px-5 dark:border-border dark:bg-muted/30">
+              <div className="flex min-w-0 items-center gap-3">
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-teal-100 text-teal-700 dark:bg-teal-950 dark:text-teal-300">
                   <Users className="h-5 w-5" />
                 </div>
 
-                <div>
-                  <p className="text-sm font-bold text-slate-800 dark:text-foreground">
+                <div className="min-w-0">
+                  <p className="break-words text-sm font-bold text-slate-800 dark:text-foreground">
                     {event.participantsCount ?? 0} Volunteers Joined
                   </p>
 
-                  <p className="text-xs text-slate-500 dark:text-muted-foreground">
+                  <p className="mt-0.5 text-xs leading-5 text-slate-500 dark:text-muted-foreground">
                     Sign up to join hands for this drive
                   </p>
                 </div>
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className="flex w-full items-center gap-2 sm:w-auto">
                 <Button
                   variant="outline"
                   size="icon"
@@ -355,9 +358,9 @@ export default function EventDetailsContent() {
                 <Button
                   onClick={handleJoinEvent}
                   disabled={joining || isPastEvent || isPending}
-                  className="h-10 flex-1 bg-teal-600 px-5 text-white hover:bg-teal-700 sm:flex-none"
+                  className="h-10 flex-1 bg-teal-600 px-3 text-sm text-white hover:bg-teal-700 sm:flex-none sm:px-5 sm:text-base"
                 >
-                  <HandHeart className="mr-2 h-4 w-4" />
+                  <HandHeart className="mr-2 h-4 w-4 shrink-0" />
 
                   {isPastEvent
                     ? "Event Ended"
@@ -369,28 +372,28 @@ export default function EventDetailsContent() {
             </div>
 
             {/* Main Content Grid */}
-            <div className="grid grid-cols-1 gap-8 md:grid-cols-[minmax(0,1fr)_280px] md:gap-10">
+            <div className="grid grid-cols-1 gap-6 sm:gap-8 md:grid-cols-[minmax(0,1fr)_280px] md:gap-10">
               {/* Left Side */}
               <div className="min-w-0">
                 {/* About Section */}
                 <section>
-                  <h2 className="text-lg font-bold text-slate-900 dark:text-foreground">
+                  <h2 className="text-base font-bold text-slate-900 sm:text-lg dark:text-foreground">
                     About this Social Initiative
                   </h2>
 
-                  <p className="mt-3 whitespace-pre-line border-b border-slate-200 pb-6 text-sm leading-7 text-slate-600 dark:border-border dark:text-muted-foreground">
+                  <p className="mt-3 whitespace-pre-line break-words border-b border-slate-200 pb-5 text-sm leading-7 text-slate-600 sm:pb-6 sm:text-base dark:border-border dark:text-muted-foreground">
                     {event.description}
                   </p>
                 </section>
 
                 {/* Volunteer Guidelines */}
-                <section className="mt-6">
+                <section className="mt-6 sm:mt-7">
                   <div className="mb-4 flex items-center gap-2">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-teal-50 text-teal-700 dark:bg-teal-950 dark:text-teal-300">
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-teal-50 text-teal-700 dark:bg-teal-950 dark:text-teal-300">
                       <ClipboardList className="h-4 w-4" />
                     </div>
 
-                    <h2 className="text-sm font-bold uppercase tracking-wide text-slate-800 dark:text-foreground">
+                    <h2 className="text-xs font-bold uppercase tracking-wide text-slate-800 sm:text-sm dark:text-foreground">
                       Volunteer Guidelines
                     </h2>
                   </div>
@@ -400,26 +403,28 @@ export default function EventDetailsContent() {
                       {guidelines.map((guideline, index) => (
                         <li
                           key={index}
-                          className="flex items-start gap-2.5 text-xs leading-6 text-slate-600 dark:text-muted-foreground"
+                          className="flex items-start gap-2.5 text-sm leading-6 text-slate-600 sm:text-sm dark:text-muted-foreground"
                         >
                           <CheckCircle2 className="mt-1 h-3.5 w-3.5 shrink-0 text-teal-600 dark:text-teal-400" />
 
-                          <span>{guideline}</span>
+                          <span className="min-w-0 break-words">
+                            {guideline}
+                          </span>
                         </li>
                       ))}
                     </ul>
                   ) : (
-                    <p className="rounded-lg bg-slate-50 p-4 text-xs leading-6 text-slate-500 dark:bg-muted/30 dark:text-muted-foreground">
+                    <p className="rounded-lg bg-slate-50 p-3 text-sm leading-6 text-slate-500 sm:p-4 dark:bg-muted/30 dark:text-muted-foreground">
                       No volunteer guidelines have been added for this event
-                      yet. Please follow the organizer's instructions.
+                      yet. Please follow the organizer&apos;s instructions.
                     </p>
                   )}
                 </section>
               </div>
 
               {/* Right Side - Organizer Card */}
-              <aside>
-                <div className="rounded-xl border border-slate-200 bg-white p-4 dark:border-border dark:bg-card">
+              <aside className="min-w-0">
+                <div className="rounded-xl border border-slate-200 bg-white p-3 sm:p-4 dark:border-border dark:bg-card">
                   <h3 className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-muted-foreground">
                     Initiative Organizer
                   </h3>
@@ -442,48 +447,50 @@ export default function EventDetailsContent() {
                         {event.creator?.name || "Community Organizer"}
                       </h4>
 
-                      <p className="mt-1 flex items-center gap-1 break-all text-[10px] text-slate-500 dark:text-muted-foreground">
-                        <Mail className="h-3 w-3 shrink-0" />
-                        {event.creator?.email || event.creatorEmail}
+                      <p className="mt-1 flex min-w-0 items-start gap-1 break-all text-[10px] leading-4 text-slate-500 dark:text-muted-foreground">
+                        <Mail className="mt-0.5 h-3 w-3 shrink-0" />
+                        <span className="break-all">
+                          {event.creator?.email || event.creatorEmail}
+                        </span>
                       </p>
                     </div>
                   </div>
 
                   <div className="mt-4 border-t border-slate-200 pt-3 dark:border-border">
                     <div className="flex items-center gap-2 text-[11px] text-teal-700 dark:text-teal-400">
-                      <ShieldCheck className="h-4 w-4" />
+                      <ShieldCheck className="h-4 w-4 shrink-0" />
                       <span>Verified Platform Member</span>
                     </div>
                   </div>
                 </div>
 
                 {/* Event Reminder */}
-                <div className="mt-4 rounded-xl border border-teal-100 bg-teal-50/70 p-4 dark:border-teal-900 dark:bg-teal-950/30">
+                <div className="mt-4 rounded-xl border border-teal-100 bg-teal-50/70 p-3 sm:p-4 dark:border-teal-900 dark:bg-teal-950/30">
                   <div className="flex items-center gap-2">
-                    <HandHeart className="h-4 w-4 text-teal-700 dark:text-teal-300" />
+                    <HandHeart className="h-4 w-4 shrink-0 text-teal-700 dark:text-teal-300" />
 
                     <h3 className="text-xs font-bold text-teal-900 dark:text-teal-200">
                       Make a Difference
                     </h3>
                   </div>
 
-                  <p className="mt-2 text-xs leading-5 text-teal-800/80 dark:text-teal-300/80">
-                    Your time and effort can make a real difference in someone's
-                    life.
+                  <p className="mt-2 break-words text-xs leading-5 text-teal-800/80 dark:text-teal-300/80">
+                    Your time and effort can make a real difference in
+                    someone&apos;s life.
                   </p>
                 </div>
               </aside>
             </div>
 
             {/* Bottom Join Section */}
-            <div className="mt-9 rounded-xl border border-slate-200 bg-slate-50 p-5 dark:border-border dark:bg-muted/30">
+            <div className="mt-6 rounded-xl border border-slate-200 bg-slate-50 p-3 sm:mt-9 sm:p-5 dark:border-border dark:bg-muted/30">
               <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                <div>
-                  <h3 className="font-bold text-slate-900 dark:text-foreground">
+                <div className="min-w-0">
+                  <h3 className="break-words text-sm font-bold text-slate-900 sm:text-base dark:text-foreground">
                     Be Part of the Change
                   </h3>
 
-                  <p className="mt-1 text-xs leading-5 text-slate-500 dark:text-muted-foreground">
+                  <p className="mt-1 break-words text-xs leading-5 text-slate-500 sm:text-sm dark:text-muted-foreground">
                     Join this initiative and make a positive impact in your
                     community.
                   </p>
@@ -492,9 +499,9 @@ export default function EventDetailsContent() {
                 <Button
                   onClick={handleJoinEvent}
                   disabled={joining || isPastEvent || isPending}
-                  className="bg-teal-600 px-6 text-white hover:bg-teal-700"
+                  className="w-full shrink-0 bg-teal-600 px-6 text-white hover:bg-teal-700 sm:w-auto"
                 >
-                  <HandHeart className="mr-2 h-4 w-4" />
+                  <HandHeart className="mr-2 h-4 w-4 shrink-0" />
 
                   {isPastEvent
                     ? "Event Has Ended"

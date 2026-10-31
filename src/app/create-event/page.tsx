@@ -222,23 +222,29 @@ export default function CreateEventPage() {
   };
 
   return (
-    <main className="min-h-screen bg-gray-50 px-4 py-10">
-      <div className="mx-auto max-w-3xl">
-        <div className="mb-8 text-center">
-          <h1 className="text-3xl font-bold text-gray-900">Create an Event</h1>
-          <p className="mt-2 text-gray-600">
+    <main className="min-h-screen bg-gray-50 px-3 py-6 sm:px-6 sm:py-10 lg:px-8">
+      <div className="mx-auto w-full max-w-3xl">
+        {/* Header */}
+        <div className="mb-6 text-center sm:mb-8">
+          <h1 className="text-2xl font-bold text-gray-900 sm:text-3xl lg:text-4xl">
+            Create an Event
+          </h1>
+
+          <p className="mx-auto mt-2 max-w-xl text-sm leading-relaxed text-gray-600 sm:text-base">
             Create a volunteering event and make a positive impact.
           </p>
         </div>
 
         <form
           onSubmit={handleSubmit}
-          className="space-y-6 rounded-2xl border border-gray-200 bg-white p-5 shadow-sm sm:p-8"
+          className="space-y-5 rounded-xl border border-gray-200 bg-white p-4 shadow-sm sm:space-y-6 sm:rounded-2xl sm:p-6 md:p-8"
         >
+          {/* Event Title */}
           <div>
-            <label className="mb-2 block font-medium text-gray-700">
+            <label className="mb-2 block text-sm font-medium text-gray-700 sm:text-base">
               Event Title
             </label>
+
             <input
               type="text"
               name="title"
@@ -247,14 +253,16 @@ export default function CreateEventPage() {
               placeholder="Enter event title"
               maxLength={100}
               required
-              className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-green-600 focus:ring-2 focus:ring-green-100"
+              className="w-full min-w-0 rounded-lg border border-gray-300 px-3 py-3 text-sm outline-none transition focus:border-green-600 focus:ring-2 focus:ring-green-100 sm:px-4 sm:text-base"
             />
           </div>
 
+          {/* Description */}
           <div>
-            <label className="mb-2 block font-medium text-gray-700">
+            <label className="mb-2 block text-sm font-medium text-gray-700 sm:text-base">
               Description
             </label>
+
             <textarea
               name="description"
               value={formData.description}
@@ -263,20 +271,22 @@ export default function CreateEventPage() {
               rows={5}
               maxLength={2000}
               required
-              className="w-full resize-y rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-green-600 focus:ring-2 focus:ring-green-100"
+              className="w-full min-w-0 resize-y rounded-lg border border-gray-300 px-3 py-3 text-sm outline-none transition focus:border-green-600 focus:ring-2 focus:ring-green-100 sm:px-4 sm:text-base"
             />
           </div>
 
+          {/* Category */}
           <div>
-            <label className="mb-2 block font-medium text-gray-700">
+            <label className="mb-2 block text-sm font-medium text-gray-700 sm:text-base">
               Category
             </label>
+
             <select
               name="category"
               value={formData.category}
               onChange={handleChange}
               required
-              className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 outline-none focus:border-green-600"
+              className="w-full min-w-0 rounded-lg border border-gray-300 bg-white px-3 py-3 text-sm outline-none transition focus:border-green-600 focus:ring-2 focus:ring-green-100 sm:px-4 sm:text-base"
             >
               <option value="">Select a category</option>
               {categories.map((category) => (
@@ -287,10 +297,12 @@ export default function CreateEventPage() {
             </select>
           </div>
 
+          {/* Event Image */}
           <div>
-            <label className="mb-2 block font-medium text-gray-700">
+            <label className="mb-2 block text-sm font-medium text-gray-700 sm:text-base">
               Event Image URL
             </label>
+
             <input
               type="url"
               name="image"
@@ -298,14 +310,16 @@ export default function CreateEventPage() {
               onChange={handleChange}
               placeholder="https://example.com/image.jpg"
               required
-              className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-green-600"
+              className="w-full min-w-0 rounded-lg border border-gray-300 px-3 py-3 text-sm outline-none transition focus:border-green-600 sm:px-4 sm:text-base"
             />
           </div>
 
+          {/* Location */}
           <div>
-            <label className="mb-2 block font-medium text-gray-700">
+            <label className="mb-2 block text-sm font-medium text-gray-700 sm:text-base">
               Location
             </label>
+
             <input
               type="text"
               name="location"
@@ -314,15 +328,17 @@ export default function CreateEventPage() {
               placeholder="Enter event location"
               maxLength={200}
               required
-              className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-green-600"
+              className="w-full min-w-0 rounded-lg border border-gray-300 px-3 py-3 text-sm outline-none transition focus:border-green-600 sm:px-4 sm:text-base"
             />
           </div>
 
+          {/* Event Date */}
           <div>
-            <label className="mb-2 flex items-center gap-2 font-medium text-gray-700">
-              <CalendarDays size={18} />
+            <label className="mb-2 flex items-center gap-2 text-sm font-medium text-gray-700 sm:text-base">
+              <CalendarDays size={18} className="shrink-0" />
               Event Date
             </label>
+
             <input
               type="date"
               name="eventDate"
@@ -330,21 +346,22 @@ export default function CreateEventPage() {
               onChange={handleChange}
               min={minDate}
               required
-              className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-green-600"
+              className="w-full min-w-0 rounded-lg border border-gray-300 px-3 py-3 text-sm outline-none transition focus:border-green-600 sm:px-4 sm:text-base"
             />
           </div>
 
+          {/* Volunteer Guidelines */}
           <div>
-            <div className="mb-3 flex items-center justify-between gap-3">
-              <label className="flex items-center gap-2 font-medium text-gray-700">
-                <ListChecks size={19} />
+            <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+              <label className="flex items-center gap-2 text-sm font-medium text-gray-700 sm:text-base">
+                <ListChecks size={19} className="shrink-0" />
                 Volunteer Guidelines
               </label>
 
               <button
                 type="button"
                 onClick={addGuideline}
-                className="flex items-center gap-1 rounded-lg bg-green-50 px-3 py-2 text-sm font-medium text-green-700 hover:bg-green-100"
+                className="flex shrink-0 items-center gap-1 rounded-lg bg-green-50 px-3 py-2 text-sm font-medium text-green-700 transition hover:bg-green-100"
               >
                 <Plus size={17} />
                 Add
@@ -353,7 +370,7 @@ export default function CreateEventPage() {
 
             <div className="space-y-3">
               {volunteerGuidelines.map((guideline, index) => (
-                <div key={index} className="flex items-center gap-2">
+                <div key={index} className="flex min-w-0 items-center gap-2">
                   <input
                     type="text"
                     value={guideline}
@@ -363,14 +380,14 @@ export default function CreateEventPage() {
                     placeholder={`Guideline ${index + 1}`}
                     maxLength={200}
                     required
-                    className="min-w-0 flex-1 rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-green-600"
+                    className="min-w-0 flex-1 rounded-lg border border-gray-300 px-3 py-3 text-sm outline-none transition focus:border-green-600 sm:px-4 sm:text-base"
                   />
 
                   <button
                     type="button"
                     onClick={() => removeGuideline(index)}
                     aria-label="Remove guideline"
-                    className="rounded-lg p-3 text-red-500 hover:bg-red-50"
+                    className="shrink-0 rounded-lg p-3 text-red-500 transition hover:bg-red-50"
                   >
                     <Trash2 size={19} />
                   </button>
@@ -379,10 +396,11 @@ export default function CreateEventPage() {
             </div>
           </div>
 
+          {/* Submit */}
           <button
             type="submit"
             disabled={loading}
-            className="flex w-full items-center justify-center gap-2 rounded-lg bg-green-600 px-5 py-3 font-semibold text-white transition hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-60"
+            className="flex w-full items-center justify-center gap-2 rounded-lg bg-green-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-60 sm:px-5 sm:py-3.5 sm:text-base"
           >
             {loading ? (
               <>

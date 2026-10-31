@@ -77,19 +77,21 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-10">
-      <div className="w-full max-w-md rounded-2xl border border-gray-100 bg-white p-6 shadow-lg sm:p-8">
+    <main className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-8 sm:px-6 sm:py-12">
+      <div className="w-full max-w-md rounded-2xl border border-gray-100 bg-white p-5 shadow-lg sm:p-7 md:p-8">
         {/* Header */}
-        <div className="mb-7 text-center">
-          <h1 className="text-3xl font-bold text-gray-900">Welcome Back</h1>
+        <div className="mb-6 text-center sm:mb-7">
+          <h1 className="text-2xl font-bold text-gray-900 sm:text-3xl">
+            Welcome Back
+          </h1>
 
-          <p className="mt-2 text-sm text-gray-500">
+          <p className="mx-auto mt-2 max-w-sm text-sm leading-6 text-gray-500 sm:text-base">
             Login to continue making a difference with ShobaiMile.
           </p>
         </div>
 
         {/* Login Form */}
-        <form onSubmit={handleLogin} className="space-y-5">
+        <form onSubmit={handleLogin} className="space-y-4 sm:space-y-5">
           {/* Email */}
           <div>
             <label
@@ -102,7 +104,7 @@ export default function LoginPage() {
             <div className="relative">
               <Mail
                 size={18}
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                className="absolute top-1/2 left-3 -translate-y-1/2 text-gray-400"
               />
 
               <input
@@ -114,7 +116,7 @@ export default function LoginPage() {
                 autoComplete="email"
                 required
                 disabled={loading}
-                className="w-full rounded-lg border border-gray-200 py-3 pl-10 pr-4 text-sm text-gray-900 outline-none transition focus:border-cyan-600 focus:ring-2 focus:ring-cyan-100 disabled:bg-gray-100"
+                className="h-12 w-full min-w-0 rounded-lg border border-gray-200 py-3 pr-4 pl-10 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-cyan-600 focus:ring-2 focus:ring-cyan-100 disabled:bg-gray-100 sm:text-base"
               />
             </div>
           </div>
@@ -131,7 +133,7 @@ export default function LoginPage() {
             <div className="relative">
               <Lock
                 size={18}
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                className="absolute top-1/2 left-3 -translate-y-1/2 text-gray-400"
               />
 
               <input
@@ -143,7 +145,7 @@ export default function LoginPage() {
                 autoComplete="current-password"
                 required
                 disabled={loading}
-                className="w-full rounded-lg border border-gray-200 py-3 pl-10 pr-12 text-sm text-gray-900 outline-none transition focus:border-cyan-600 focus:ring-2 focus:ring-cyan-100 disabled:bg-gray-100"
+                className="h-12 w-full min-w-0 rounded-lg border border-gray-200 py-3 pr-12 pl-10 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-cyan-600 focus:ring-2 focus:ring-cyan-100 disabled:bg-gray-100 sm:text-base"
               />
 
               {/* Show / Hide Password */}
@@ -153,7 +155,7 @@ export default function LoginPage() {
                 disabled={loading}
                 aria-label={showPassword ? "Hide password" : "Show password"}
                 aria-pressed={showPassword}
-                className="absolute right-3 top-1/2 -translate-y-1/2 rounded-md p-1 text-gray-400 transition hover:text-cyan-600 disabled:opacity-50"
+                className="absolute top-1/2 right-3 -translate-y-1/2 rounded-md p-1 text-gray-400 transition hover:text-cyan-600 disabled:opacity-50"
               >
                 {showPassword ? <EyeOff size={19} /> : <Eye size={19} />}
               </button>
@@ -164,7 +166,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading || googleLoading}
-            className="flex w-full items-center justify-center gap-2 rounded-lg bg-cyan-600 px-4 py-3 font-semibold text-white transition hover:bg-cyan-700 disabled:cursor-not-allowed disabled:opacity-60"
+            className="flex h-12 w-full items-center justify-center gap-2 rounded-lg bg-cyan-600 px-4 text-sm font-semibold text-white transition hover:bg-cyan-700 disabled:cursor-not-allowed disabled:opacity-60 sm:text-base"
           >
             {loading ? (
               <>
@@ -178,13 +180,13 @@ export default function LoginPage() {
         </form>
 
         {/* Divider */}
-        <div className="relative my-6">
+        <div className="relative my-5 sm:my-6">
           <div className="absolute inset-0 flex items-center">
             <div className="w-full border-t border-gray-200" />
           </div>
 
           <div className="relative flex justify-center">
-            <span className="bg-white px-3 text-sm text-gray-500">
+            <span className="bg-white px-3 text-xs text-gray-500 sm:text-sm">
               Or continue with
             </span>
           </div>
@@ -195,16 +197,15 @@ export default function LoginPage() {
           type="button"
           onClick={handleGoogleLogin}
           disabled={loading || googleLoading}
-          className="flex w-full items-center justify-center gap-3 rounded-lg border border-gray-200 bg-white px-4 py-3 font-semibold text-gray-700 transition hover:bg-gray-50 hover:border-gray-300 disabled:cursor-not-allowed disabled:opacity-60"
+          className="flex h-12 w-full items-center justify-center gap-2 rounded-lg border border-gray-200 bg-white px-3 text-sm font-semibold text-gray-700 transition hover:border-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-60 sm:gap-3 sm:px-4 sm:text-base"
         >
           {googleLoading ? (
-            <Loader2 size={20} className="animate-spin" />
+            <Loader2 size={20} className="shrink-0 animate-spin" />
           ) : (
-            /* Google Official G Icon */
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 48 48"
-              className="h-5 w-5"
+              className="h-5 w-5 shrink-0"
               aria-hidden="true"
             >
               <path
@@ -226,11 +227,13 @@ export default function LoginPage() {
             </svg>
           )}
 
-          {googleLoading ? "Connecting to Google..." : "Continue with Google"}
+          <span className="truncate">
+            {googleLoading ? "Connecting to Google..." : "Continue with Google"}
+          </span>
         </button>
 
         {/* Register Link */}
-        <p className="mt-7 text-center text-sm text-gray-600">
+        <p className="mt-6 text-center text-xs text-gray-600 sm:mt-7 sm:text-sm">
           Don&apos;t have an account?{" "}
           <Link
             href="/register"

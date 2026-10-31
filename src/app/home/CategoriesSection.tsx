@@ -46,32 +46,35 @@ const categories = [
 
 export default function CategoriesSection() {
   return (
-    <section className="bg-gray-50 py-20 dark:bg-background">
-      <div className="mx-auto max-w-7xl px-4">
-        <div className="mb-12 flex flex-wrap items-end justify-between gap-4">
+    <section className="bg-gray-50 py-12 dark:bg-background sm:py-16 lg:py-20">
+      <div className="mx-auto w-full max-w-7xl px-3 sm:px-5 lg:px-8">
+        {/* Section Heading */}
+        <div className="mb-8 flex flex-col items-start gap-5 sm:mb-10 md:flex-row md:items-end md:justify-between lg:mb-12">
           <div>
-            <span className="font-semibold text-cyan-700 dark:text-cyan-400">
+            <span className="text-xs font-semibold tracking-wide text-cyan-700 dark:text-cyan-400 sm:text-sm">
               EXPLORE OPPORTUNITIES
             </span>
 
-            <h2 className="mt-3 text-3xl font-bold text-gray-900 dark:text-foreground md:text-4xl">
+            <h2 className="mt-2 text-2xl font-bold text-gray-900 dark:text-foreground sm:mt-3 sm:text-3xl md:text-4xl">
               Find Your Cause
             </h2>
 
-            <p className="mt-3 text-gray-600 dark:text-muted-foreground">
+            <p className="mt-2 text-sm text-gray-600 dark:text-muted-foreground sm:mt-3 sm:text-base">
               Choose a cause that matters to you.
             </p>
           </div>
 
           <Link
             href="/events"
-            className="inline-flex items-center gap-2 font-semibold text-cyan-700 transition hover:text-cyan-900 dark:text-cyan-400 dark:hover:text-cyan-300"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-cyan-700 transition hover:text-cyan-900 dark:text-cyan-400 dark:hover:text-cyan-300 sm:text-base"
           >
-            View All Events <ArrowUpRight size={18} />
+            View All Events
+            <ArrowUpRight size={18} />
           </Link>
         </div>
 
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6">
+        {/* Categories Grid */}
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-6">
           {categories.map((category) => {
             const Icon = category.icon;
 
@@ -79,15 +82,15 @@ export default function CategoriesSection() {
               <Link
                 href={`/events?category=${encodeURIComponent(category.name)}`}
                 key={category.name}
-                className="group rounded-2xl border border-gray-100 bg-white p-6 text-center transition hover:-translate-y-1 hover:shadow-lg dark:border-border dark:bg-card"
+                className="group flex min-w-0 flex-col items-center rounded-xl border border-gray-100 bg-white px-3 py-5 text-center transition hover:-translate-y-1 hover:shadow-lg dark:border-border dark:bg-card sm:rounded-2xl sm:px-4 sm:py-6"
               >
                 <div
-                  className={`mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-xl ${category.color}`}
+                  className={`mb-3 flex h-11 w-11 items-center justify-center rounded-xl sm:mb-4 sm:h-14 sm:w-14 ${category.color}`}
                 >
-                  <Icon size={27} />
+                  <Icon size={22} className="sm:h-[27px] sm:w-[27px]" />
                 </div>
 
-                <h3 className="font-semibold text-gray-800 dark:text-card-foreground">
+                <h3 className="break-words text-sm font-semibold leading-5 text-gray-800 dark:text-card-foreground sm:text-base">
                   {category.name}
                 </h3>
               </Link>
