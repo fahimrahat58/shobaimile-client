@@ -29,7 +29,7 @@ export default function UpcomingEventsSection() {
         }
 
         const data = await response.json();
-        setEvents(data.events?.slice(0, 3) || []);
+        setEvents(data.events?.slice(0, 6) || []);
       } catch (error) {
         console.error("Upcoming events error:", error);
       } finally {
