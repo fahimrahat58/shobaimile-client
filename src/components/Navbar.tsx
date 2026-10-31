@@ -40,7 +40,6 @@ export default function Navbar() {
 
   const [mounted, setMounted] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
-  const [showUsername, setShowUsername] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -132,10 +131,7 @@ export default function Navbar() {
           {!isPending &&
             (user ? (
               <DropdownMenu>
-                <DropdownMenuTrigger
-                  className="group flex max-w-[220px] items-center gap-1.5 rounded-xl border border-border bg-card p-1 pr-2 outline-none transition hover:border-cyan-500/50 hover:bg-muted sm:gap-2 sm:pr-2.5"
-                  onClick={() => setShowUsername((prev) => !prev)}
-                >
+                <DropdownMenuTrigger className="group flex max-w-[220px] items-center gap-1.5 rounded-xl border border-border bg-card p-1 pr-2 outline-none transition hover:border-cyan-500/50 hover:bg-muted sm:gap-2 sm:pr-2.5">
                   {/* Avatar */}
                   <div className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-gradient-to-br from-cyan-400 to-blue-600 text-white sm:h-9 sm:w-9">
                     {user.image ? (
@@ -151,11 +147,7 @@ export default function Navbar() {
 
                   {/* Username */}
                   <span
-                    className={`overflow-hidden whitespace-nowrap text-xs font-semibold transition-all duration-300 sm:text-sm ${
-                      showUsername
-                        ? "max-w-[110px] opacity-100 sm:max-w-[180px]"
-                        : "max-w-0 opacity-0"
-                    }`}
+                    className="max-w-0 overflow-hidden whitespace-nowrap text-xs font-semibold opacity-0 transition-all duration-300 group-hover:max-w-[110px] group-hover:opacity-100 sm:text-sm sm:group-hover:max-w-[180px]"
                     title={user.name || "My Account"}
                   >
                     {user.name || "My Account"}

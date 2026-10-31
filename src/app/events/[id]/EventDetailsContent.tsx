@@ -30,8 +30,6 @@ interface Event {
   location: string;
   eventDate: string;
   creatorEmail: string;
-
-  // MongoDB থেকে আসবে
   volunteerGuidelines?: string[];
   participantsCount?: number;
 
@@ -40,6 +38,14 @@ interface Event {
     email: string;
     image?: string;
   } | null;
+}
+
+interface JoinedEvent {
+  _id: string;
+  joinedAt: string;
+  event: {
+    _id: string;
+  };
 }
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -56,6 +62,8 @@ export default function EventDetailsContent() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [joining, setJoining] = useState(false);
+  const [hasJoined, setHasJoined] = useState(false);
+  const [checkingJoined, setCheckingJoined] = useState(true);
 
   const isMountedRef = useRef(false);
 
@@ -128,6 +136,71 @@ export default function EventDetailsContent() {
     };
   }, [eventId]);
 
+  // Check Already Joined
+  useEffect(() => {
+    let isMounted = true;
+
+    const checkJoinedEvent = async () => {
+      if (isPending) return;
+
+      if (!session?.user || !eventId || !API_URL) {
+        setHasJoined(false);
+        setCheckingJoined(false);
+        return;
+      }
+
+      try {
+        setCheckingJoined(true);
+
+        const tokenResult = await authClient.token();
+        const token = tokenResult.data?.token;
+
+        if (tokenResult.error || !token) {
+          throw new Error("Authentication token পাওয়া যায়নি");
+        }
+
+        const response = await fetch(`${API_URL}/api/events/joined`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: "application/json",
+          },
+          cache: "no-store",
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.message || "Failed to check joined events");
+        }
+
+        const joinedEvents: JoinedEvent[] = Array.isArray(data.events)
+          ? data.events
+          : [];
+
+        const joined = joinedEvents.some(
+          (item) => String(item.event?._id) === String(eventId),
+        );
+
+        if (isMounted) {
+          setHasJoined(joined);
+        }
+      } catch (error) {
+        console.error("Check joined event error:", error);
+      } finally {
+        if (isMounted) {
+          setCheckingJoined(false);
+        }
+      }
+    };
+
+    checkJoinedEvent();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [eventId, session?.user?.email, isPending]);
+
   // Join Event
   const handleJoinEvent = async () => {
     if (isPending) {
@@ -138,6 +211,11 @@ export default function EventDetailsContent() {
     if (!session?.user) {
       toast.error("To Join Please Log In");
       router.push("/login");
+      return;
+    }
+
+    if (hasJoined) {
+      toast.info("You have already joined this event");
       return;
     }
 
@@ -174,8 +252,29 @@ export default function EventDetailsContent() {
 
       const data = await response.json();
 
+      if (response.status === 409) {
+        if (isMountedRef.current) {
+          setHasJoined(true);
+        }
+
+        toast.info("You have already joined this event");
+        return;
+      }
+
       if (!response.ok) {
         throw new Error(data.message || "Failed to join event");
+      }
+
+      if (isMountedRef.current) {
+        setHasJoined(true);
+        setEvent((previous) =>
+          previous
+            ? {
+                ...previous,
+                participantsCount: (previous.participantsCount ?? 0) + 1,
+              }
+            : previous,
+        );
       }
 
       toast.success("Successfully joined the event!");
@@ -262,12 +361,24 @@ export default function EventDetailsContent() {
     year: "numeric",
   });
 
-  // Get guidelines from MongoDB
   const guidelines = Array.isArray(event.volunteerGuidelines)
     ? event.volunteerGuidelines.filter(
         (item) => typeof item === "string" && item.trim().length > 0,
       )
     : [];
+
+  const joinButtonDisabled =
+    joining || hasJoined || isPastEvent || isPending || checkingJoined;
+
+  const joinButtonText = hasJoined
+    ? "Already Joined"
+    : isPastEvent
+      ? "Event Ended"
+      : checkingJoined
+        ? "Checking..."
+        : joining
+          ? "Joining..."
+          : "Join Event";
 
   return (
     <main className="min-h-screen bg-slate-50 px-3 py-5 text-slate-900 dark:bg-background dark:text-foreground sm:px-6 sm:py-8 lg:px-10">
@@ -294,7 +405,6 @@ export default function EventDetailsContent() {
               <div className="h-full w-full bg-slate-200 dark:bg-muted" />
             )}
 
-            {/* Image Overlay */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-black/10" />
 
             {/* Category */}
@@ -357,16 +467,16 @@ export default function EventDetailsContent() {
 
                 <Button
                   onClick={handleJoinEvent}
-                  disabled={joining || isPastEvent || isPending}
+                  disabled={joinButtonDisabled}
                   className="h-10 flex-1 bg-teal-600 px-3 text-sm text-white hover:bg-teal-700 sm:flex-none sm:px-5 sm:text-base"
                 >
-                  <HandHeart className="mr-2 h-4 w-4 shrink-0" />
+                  {hasJoined ? (
+                    <CheckCircle2 className="mr-2 h-4 w-4 shrink-0" />
+                  ) : (
+                    <HandHeart className="mr-2 h-4 w-4 shrink-0" />
+                  )}
 
-                  {isPastEvent
-                    ? "Event Ended"
-                    : joining
-                      ? "Joining..."
-                      : "Join Event"}
+                  {joinButtonText}
                 </Button>
               </div>
             </div>
@@ -498,16 +608,24 @@ export default function EventDetailsContent() {
 
                 <Button
                   onClick={handleJoinEvent}
-                  disabled={joining || isPastEvent || isPending}
+                  disabled={joinButtonDisabled}
                   className="w-full shrink-0 bg-teal-600 px-6 text-white hover:bg-teal-700 sm:w-auto"
                 >
-                  <HandHeart className="mr-2 h-4 w-4 shrink-0" />
+                  {hasJoined ? (
+                    <CheckCircle2 className="mr-2 h-4 w-4 shrink-0" />
+                  ) : (
+                    <HandHeart className="mr-2 h-4 w-4 shrink-0" />
+                  )}
 
-                  {isPastEvent
-                    ? "Event Has Ended"
-                    : joining
-                      ? "Joining..."
-                      : "Join This Event"}
+                  {hasJoined
+                    ? "Already Joined"
+                    : isPastEvent
+                      ? "Event Has Ended"
+                      : checkingJoined
+                        ? "Checking..."
+                        : joining
+                          ? "Joining..."
+                          : "Join This Event"}
                 </Button>
               </div>
             </div>
