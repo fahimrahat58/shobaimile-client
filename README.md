@@ -1,97 +1,83 @@
-# 🌍 Shobaimile — Community & Volunteering Platform
+# 🌍 ShobaiMile — Volunteer Community Platform
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Next.js-16-black?style=for-the-badge&logo=next.js" alt="Next.js" />
-  <img src="https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=black" alt="React" />
-  <img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" />
-  <img src="https://img.shields.io/badge/Tailwind_CSS-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white" alt="Tailwind CSS" />
-</p>
+### 🤝 Connect People • Empower Communities • Create Positive Change
 
-<p align="center">
-  A community-driven platform that connects people through volunteering, social activities, and meaningful community events.
-</p>
+**ShobaiMile** is a community-focused volunteer platform designed to connect people with volunteering opportunities and encourage meaningful social engagement. It provides a modern digital experience where users can explore community events, participate in volunteer activities, track their impact, and celebrate their contributions.
 
-<p align="center">
-  <a href="https://shobaimile.vercel.app/">
-    <strong>🚀 Live Demo</strong>
-  </a>
-</p>
+Built with modern web technologies, ShobaiMile focuses on a clean user interface, organized event management, and an engaging experience across different devices.
+
+🔗 **Live Website:** [https://shobaimile.vercel.app/](https://shobaimile.vercel.app/)
 
 ---
 
-## 📖 About The Project
+## 📸 Project Screenshot
 
-**Shobaimile** is a community-focused web application designed to bring people together and encourage social engagement through volunteering and community activities.
+Showcase the ShobaiMile user interface below.
 
-The platform provides a convenient way for users to discover events, participate in meaningful activities, and connect with their communities.
+<!-- Add your actual project screenshot to the repository -->
 
-Whether someone wants to volunteer, join a community event, or contribute to society, Shobaimile aims to make community participation easier and more accessible.
+![ShobaiMile Homepage](./public/images/project-screenshot.png)
 
-## 📸 Project Screenshots
-
-<p align="center">
-  <img src="docs/images/homepage.png" alt="Shobaimile Homepage" width="100%" />
-  <br />
-  <em>Homepage — Discover community activities and opportunities</em>
-</p>
-
-<p align="center">
-  <img src="docs/images/events.png" alt="Shobaimile Events Page" width="100%" />
-  <br />
-  <em>Events — Explore upcoming community events</em>
-</p>
-
-<p align="center">
-  <img src="docs/images/event-details.png" alt="Shobaimile Event Details" width="100%" />
-  <br />
-  <em>Event Details — View event information and participate</em>
-</p>
-
-> **Note:** Add your actual project screenshots inside `docs/images/` using the filenames shown above. You can replace or add more screenshots as needed.
+---
 
 ## ✨ Key Features
 
-### 👤 Authentication & User Management
-- Secure user registration and login.
-- Authentication using Better Auth.
-- Personalized user profiles.
-- Manage personal account information.
+### 🤝 1. Volunteer Community
+- Discover community-focused volunteering opportunities.
+- Explore events and activities that encourage social participation.
+- Help users connect with meaningful community initiatives.
 
-### 📅 Community Events
-- Discover community events and activities.
-- View detailed event information.
-- Explore event dates, locations, and descriptions.
-- Participate in community-driven initiatives.
+### 📅 2. Event Discovery
+- Browse available community events.
+- View individual event details.
+- Explore activities through organized event pages.
 
-### 🤝 Volunteer Opportunities
-- Discover volunteering opportunities.
-- Encourage social participation and community engagement.
-- Connect users with meaningful activities.
+### 👤 3. User Authentication
+- Login and registration pages.
+- Authentication integration through dedicated authentication modules.
+- Access to user-related features where authentication is required.
 
-### 📝 Event Registration
-- Register for available events.
-- Manage event participation.
-- View relevant event information.
+### 📝 4. Event Management
+- Dedicated event creation page.
+- Event management interface.
+- Individual event detail pages for displaying relevant information.
 
-### 🛠️ Event Management
-- Create and manage community events.
-- Organize activities and volunteering initiatives.
-- Manage event information through the platform.
+### 🙋 5. Joined Events
+- Dedicated page for joined events.
+- A centralized place to access relevant event participation information.
 
-### 📱 Responsive Design
-- Mobile-first responsive interface.
-- Optimized layouts for mobile, tablet, and desktop.
-- Consistent user experience across different screen sizes.
+### 📊 6. Impact Dashboard
+- Dedicated impact dashboard.
+- Components for displaying impact statistics and progress.
+- Visual representation of volunteer contributions.
 
-### 🎨 Modern User Interface
-- Clean and intuitive design.
-- Interactive components and smooth navigation.
-- Accessible and user-friendly interface.
+### 🏆 7. Certificates
+- Dedicated certificates page.
+- Reusable certificate card components.
+- A structured interface for displaying volunteer recognition.
 
-### 🔐 Protected Routes
-- Authentication-based access control.
-- Protected user-specific pages.
-- Secure handling of authenticated requests.
+### 🥇 8. Leaderboard
+- Dedicated leaderboard page.
+- A platform structure that supports community recognition and engagement.
+
+### 👤 9. User Profile
+- Dedicated profile page.
+- A centralized interface for user-related information.
+
+### 🎨 10. Modern User Interface
+- Clean and organized layouts.
+- Reusable UI components.
+- Consistent styling across different sections.
+
+### 📱 11. Responsive Experience
+- Designed for different screen sizes.
+- Flexible page layouts.
+- A convenient browsing experience across supported devices.
+
+### ⚡ 12. Organized Application Architecture
+- Next.js App Router for page routing.
+- TypeScript for type-safe development.
+- Shared components and utility modules for maintainable code.
 
 ---
 
@@ -99,15 +85,15 @@ Whether someone wants to volunteer, join a community event, or contribute to soc
 
 | Technology | Purpose |
 |---|---|
-| Next.js | Frontend framework |
-| React | UI development |
-| TypeScript | Type-safe development |
-| Tailwind CSS | Styling and responsive design |
-| Better Auth | Authentication |
-| Node.js | Backend runtime |
-| Express.js | REST API |
-| MongoDB | Database |
-| Vercel | Deployment |
+| Next.js | Application framework and routing |
+| React | Component-based user interfaces |
+| TypeScript | Type-safe application development |
+| MongoDB | Database integration |
+| Better Auth | Authentication integration |
+| CSS | Application styling |
+| Reusable UI Components | Consistent interface elements |
+| Vercel | Application deployment |
+| Git & GitHub | Version control and source code management |
 
 ---
 
@@ -115,60 +101,160 @@ Whether someone wants to volunteer, join a community event, or contribute to soc
 
 ```text
 shobaimile-client/
-│
 ├── public/
 │   └── images/
 │
-├── docs/
-│   └── images/
-│       ├── homepage.png
-│       ├── events.png
-│       └── event-details.png
-│
 ├── src/
 │   ├── app/
-│   │   ├── (auth)/
+│   │   ├── api/
+│   │   │   └── auth/
+│   │   │       └── [...all]/
+│   │   │           └── route.ts
+│   │   │
+│   │   ├── certificates/
+│   │   │   └── page.tsx
+│   │   │
+│   │   ├── create-event/
+│   │   │   └── page.tsx
+│   │   │
+│   │   ├── dashboard/
+│   │   │   └── impact/
+│   │   │       └── page.tsx
+│   │   │
 │   │   ├── events/
+│   │   │   ├── [id]/
+│   │   │   │   └── page.tsx
+│   │   │   └── page.tsx
+│   │   │
+│   │   ├── home/
+│   │   │   ├── CategoriesSection.tsx
+│   │   │   ├── CommunityGallerySection.tsx
+│   │   │   ├── CommunityStoriesSection.tsx
+│   │   │   ├── CTASection.tsx
+│   │   │   ├── FeaturesSection.tsx
+│   │   │   ├── HeroSection.tsx
+│   │   │   ├── HowItWorksSection.tsx
+│   │   │   ├── ImpactSection.tsx
+│   │   │   ├── NewsletterSection.tsx
+│   │   │   └── UpcomingEventsSection.tsx
+│   │   │
+│   │   ├── joined-events/
+│   │   │   └── page.tsx
+│   │   │
+│   │   ├── leaderboard/
+│   │   │   └── page.tsx
+│   │   │
+│   │   ├── login/
+│   │   │   └── page.tsx
+│   │   │
+│   │   ├── manage-events/
+│   │   │   └── page.tsx
+│   │   │
 │   │   ├── profile/
-│   │   ├── admin/
+│   │   │   └── page.tsx
+│   │   │
+│   │   ├── register/
+│   │   │   └── page.tsx
+│   │   │
+│   │   ├── globals.css
 │   │   ├── layout.tsx
 │   │   └── page.tsx
 │   │
 │   ├── components/
+│   │   ├── certificates/
+│   │   ├── impact/
+│   │   ├── ui/
+│   │   ├── Footer.tsx
+│   │   ├── Navbar.tsx
+│   │   └── ThemeProvider.tsx
+│   │
 │   ├── lib/
-│   └── types/
+│   │   ├── api.ts
+│   │   ├── auth-client.ts
+│   │   ├── auth.ts
+│   │   ├── mongodb.ts
+│   │   └── utils.ts
+│   │
+│   └── proxy.ts
 │
-├── .env.example
 ├── .gitignore
+├── components.json
+├── eslint.config.mjs
+├── next.config.ts
 ├── package.json
-├── tsconfig.json
-└── README.md
+├── package-lock.json
+├── README.md
+└── tsconfig.json
 ```
 
-*This is an illustrative structure. Adjust it to match the actual project folders.*
+---
+
+## 📁 Main Directory Overview
+
+### `src/app/`
+Contains application pages, layouts, global styles, and API routes using the Next.js App Router.
+
+### `src/app/home/`
+Contains reusable sections for the homepage, including the hero, features, community stories, impact, upcoming events, and newsletter sections.
+
+### `src/app/events/`
+Contains the events listing page and dynamic event detail routes.
+
+### `src/app/create-event/`
+Provides the page for creating community events.
+
+### `src/app/joined-events/`
+Contains the joined-events page.
+
+### `src/app/manage-events/`
+Contains the event management interface.
+
+### `src/app/dashboard/impact/`
+Contains the volunteer impact dashboard page.
+
+### `src/app/certificates/`
+Contains the certificates page.
+
+### `src/app/leaderboard/`
+Contains the leaderboard page.
+
+### `src/app/profile/`
+Contains the user profile page.
+
+### `src/components/`
+Stores reusable interface components, including the navbar, footer, certificate components, impact components, and UI elements.
+
+### `src/lib/`
+Contains shared utilities, API helpers, authentication modules, and MongoDB integration.
+
+### `src/app/api/`
+Contains API route handlers, including the authentication route.
+
+### `public/`
+Stores static assets such as images and icons.
 
 ---
 
 ## 🚀 Getting Started
 
-Follow these steps to run Shobaimile locally.
+Follow these instructions to run the project locally.
 
 ### Prerequisites
 
-Make sure you have installed:
+Install the following tools:
 
 - [Node.js](https://nodejs.org/)
 - npm
-- MongoDB
-- Git
+- [Git](https://git-scm.com/)
+- A code editor such as Visual Studio Code
 
 ### 1. Clone the Repository
 
 ```bash
-git clone YOUR_CLIENT_REPOSITORY_URL
+git clone YOUR_GITHUB_REPOSITORY_URL
 ```
 
-### 2. Navigate to the Project
+### 2. Navigate to the Project Directory
 
 ```bash
 cd shobaimile-client
@@ -182,74 +268,99 @@ npm install
 
 ### 4. Configure Environment Variables
 
-Create a `.env.local` file in the root directory.
+Create a `.env` file in the project root and configure the environment variables required by the application.
+
+For example, if required by your project:
 
 ```env
-NEXT_PUBLIC_API_URL=YOUR_BACKEND_API_URL
-BETTER_AUTH_URL=http://localhost:3000
-BETTER_AUTH_SECRET=YOUR_SECRET_KEY
+MONGODB_URI=your_mongodb_connection_string
 ```
 
-Configure the environment variables according to your backend and Better Auth setup.
+Add any other required authentication or service configuration values according to your implementation.
 
-### 5. Start the Development Server
+**Security:** Never commit database credentials, authentication secrets, or private API keys to a public repository.
+
+### 5. Run the Development Server
 
 ```bash
 npm run dev
 ```
 
-### 6. Open the Application
+Open the local address displayed in your terminal to access the application.
 
-Visit:
+### 6. Build the Application
 
-```text
-http://localhost:3000
+```bash
+npm run build
+```
+
+### 7. Run the Production Server
+
+After a successful production build, run:
+
+```bash
+npm run start
 ```
 
 ---
 
-## 📜 Available Scripts
+## 🎯 Project Goals
 
-| Command | Description |
-|---|---|
-| `npm run dev` | Start the development server |
-| `npm run build` | Build the production application |
-| `npm run start` | Start the production server |
-| `npm run lint` | Run lint checks |
+ShobaiMile aims to:
 
----
-
-## 🌐 Live Deployment
-
-The application is deployed using Vercel.
-
-<p align="center">
-  <a href="https://shobaimile.vercel.app/">
-    <img src="https://img.shields.io/badge/Visit-Shobaimile-15A1BF?style=for-the-badge&logo=vercel&logoColor=white" alt="Visit Shobaimile" />
-  </a>
-</p>
-
-**Live Website:** https://shobaimile.vercel.app/
+- Make volunteering opportunities easier to discover.
+- Encourage participation in community activities.
+- Provide a centralized interface for community events.
+- Help users explore and manage event participation.
+- Present volunteer impact through statistics and progress components.
+- Recognize volunteer contributions through certificates and leaderboards.
+- Deliver a modern, responsive, and accessible user experience.
 
 ---
 
 ## 🔮 Future Improvements
 
-- Real-time notifications for community events.
-- Advanced event search and filtering.
-- Event reviews and feedback.
-- Enhanced volunteer activity tracking.
-- Improved analytics for event organizers.
-- Additional accessibility improvements.
+Potential enhancements for future versions include:
+
+- 🔎 Advanced event search and filtering.
+- 📍 Location-based volunteer opportunities.
+- 📅 Event calendars and reminders.
+- 🔔 Notifications for event updates.
+- 📊 More detailed volunteer analytics.
+- 🏅 Expanded volunteer achievement and recognition features.
+- 👤 Enhanced profile customization.
+- 📱 Further mobile usability improvements.
+- 🛡️ Additional security and access-control enhancements.
 
 ---
 
-## 👨‍💻 Author
+## 🌐 Live Demo
 
-Developed with ❤️ as a community-focused web application.
+Explore the deployed application:
+
+### 👉 [Visit ShobaiMile](https://shobaimile.vercel.app/)
 
 ---
 
-<p align="center">
-  <strong>Shobaimile — Bringing Communities Together.</strong>
-</p>
+## 👨‍💻 Developer
+
+**Project:** ShobaiMile  
+**Category:** Volunteer Community Platform  
+**Deployment:** Vercel  
+**Live Website:** https://shobaimile.vercel.app/
+
+Developed with ❤️ to encourage volunteering, community engagement, and positive social change.
+
+---
+
+## 📄 License
+
+Unless another license is specified in the repository, this project is presented for educational and portfolio purposes.
+
+---
+
+### ⭐ Support the Project
+
+If you find this project interesting, consider giving the repository a star on GitHub.
+
+**Together, we can make a difference—one helping hand at a time.**
