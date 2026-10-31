@@ -102,7 +102,7 @@ export default function JoinedEventsPage() {
         </h1>
 
         <p className="mt-2 max-w-sm text-sm text-muted-foreground sm:text-base">
-          তোমার Joined Events দেখতে Login করো।
+          Login to see your joined events
         </p>
 
         <Link
@@ -118,7 +118,6 @@ export default function JoinedEventsPage() {
   return (
     <main className="min-h-screen bg-background px-4 py-10 text-foreground sm:px-6 sm:py-14 md:py-16">
       <div className="mx-auto max-w-7xl">
-        {/* Page Header */}
         <div className="mb-8 text-center sm:mb-10 md:mb-12">
           <Badge className="mb-3 border-0 bg-teal-100 px-3 py-1 text-xs text-teal-700 hover:bg-teal-100 sm:mb-4 dark:bg-teal-950 dark:text-teal-300 dark:hover:bg-teal-950">
             Your Participation
@@ -133,7 +132,6 @@ export default function JoinedEventsPage() {
           </p>
         </div>
 
-        {/* Empty State */}
         {events.length === 0 ? (
           <div className="rounded-2xl border border-border bg-card px-4 py-12 text-center shadow-sm sm:py-16 md:py-20">
             <Users className="mx-auto mb-4 h-10 w-10 text-muted-foreground sm:h-12 sm:w-12" />
@@ -154,7 +152,6 @@ export default function JoinedEventsPage() {
             </Link>
           </div>
         ) : (
-          /* Events Grid */
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 lg:gap-8">
             {events.map((item) => {
               const event = item.event;
@@ -164,7 +161,6 @@ export default function JoinedEventsPage() {
                   key={item._id}
                   className="group flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card text-card-foreground shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-lg"
                 >
-                  {/* Event Image */}
                   <div className="h-48 shrink-0 overflow-hidden sm:h-52 md:h-56">
                     <img
                       src={event.image}
@@ -173,7 +169,6 @@ export default function JoinedEventsPage() {
                     />
                   </div>
 
-                  {/* Event Content */}
                   <div className="flex flex-1 flex-col p-4 sm:p-5 md:p-6">
                     <div>
                       <Badge className="mb-3 max-w-full truncate border-0 bg-teal-100 text-xs text-teal-700 hover:bg-teal-100 dark:bg-teal-950 dark:text-teal-300 dark:hover:bg-teal-950">
@@ -208,7 +203,6 @@ export default function JoinedEventsPage() {
                       </div>
                     </div>
 
-                    {/* Details Button */}
                     <Link
                       href={`/events/${event._id}`}
                       className="mt-auto inline-flex h-10 w-full items-center justify-center rounded-md bg-teal-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-teal-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:ring-offset-2 focus-visible:ring-offset-card"

@@ -224,7 +224,6 @@ export default function CreateEventPage() {
   return (
     <main className="min-h-screen bg-gray-50 px-3 py-6 sm:px-6 sm:py-10 lg:px-8">
       <div className="mx-auto w-full max-w-3xl">
-        {/* Header */}
         <div className="mb-6 text-center sm:mb-8">
           <h1 className="text-2xl font-bold text-gray-900 sm:text-3xl lg:text-4xl">
             Create an Event
@@ -239,7 +238,6 @@ export default function CreateEventPage() {
           onSubmit={handleSubmit}
           className="space-y-5 rounded-xl border border-gray-200 bg-white p-4 shadow-sm sm:space-y-6 sm:rounded-2xl sm:p-6 md:p-8"
         >
-          {/* Event Title */}
           <div>
             <label className="mb-2 block text-sm font-medium text-gray-700 sm:text-base">
               Event Title
@@ -257,7 +255,6 @@ export default function CreateEventPage() {
             />
           </div>
 
-          {/* Description */}
           <div>
             <label className="mb-2 block text-sm font-medium text-gray-700 sm:text-base">
               Description
@@ -275,7 +272,6 @@ export default function CreateEventPage() {
             />
           </div>
 
-          {/* Category */}
           <div>
             <label className="mb-2 block text-sm font-medium text-gray-700 sm:text-base">
               Category
@@ -297,7 +293,6 @@ export default function CreateEventPage() {
             </select>
           </div>
 
-          {/* Event Image */}
           <div>
             <label className="mb-2 block text-sm font-medium text-gray-700 sm:text-base">
               Event Image URL
@@ -314,7 +309,6 @@ export default function CreateEventPage() {
             />
           </div>
 
-          {/* Location */}
           <div>
             <label className="mb-2 block text-sm font-medium text-gray-700 sm:text-base">
               Location
@@ -332,7 +326,6 @@ export default function CreateEventPage() {
             />
           </div>
 
-          {/* Event Date */}
           <div>
             <label className="mb-2 flex items-center gap-2 text-sm font-medium text-gray-700 sm:text-base">
               <CalendarDays size={18} className="shrink-0" />
@@ -350,7 +343,6 @@ export default function CreateEventPage() {
             />
           </div>
 
-          {/* Volunteer Guidelines */}
           <div>
             <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
               <label className="flex items-center gap-2 text-sm font-medium text-gray-700 sm:text-base">
@@ -396,7 +388,6 @@ export default function CreateEventPage() {
             </div>
           </div>
 
-          {/* Submit */}
           <button
             type="submit"
             disabled={loading}

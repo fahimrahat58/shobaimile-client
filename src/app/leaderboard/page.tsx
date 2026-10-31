@@ -91,7 +91,6 @@ export default function LeaderboardPage() {
   return (
     <main className="min-h-screen bg-gray-50 px-4 py-8 sm:px-6 sm:py-10 lg:px-10">
       <div className="mx-auto max-w-5xl">
-        {/* Header */}
         <div className="mb-7 sm:mb-8">
           <p className="text-sm font-semibold text-emerald-600 sm:text-base">
             ShobaiMile
@@ -110,7 +109,6 @@ export default function LeaderboardPage() {
           </p>
         </div>
 
-        {/* Error */}
         {error && (
           <div className="flex items-start gap-3 rounded-xl bg-red-50 p-3 text-sm text-red-600 sm:p-4 sm:text-base">
             <AlertCircle className="mt-0.5 h-5 w-5 shrink-0" />
@@ -118,7 +116,6 @@ export default function LeaderboardPage() {
           </div>
         )}
 
-        {/* Empty State */}
         {!error && leaders.length === 0 && (
           <div className="rounded-2xl bg-white px-4 py-12 text-center shadow-sm sm:py-16">
             <Trophy className="mx-auto h-10 w-10 text-gray-300 sm:h-12 sm:w-12" />
@@ -133,7 +130,6 @@ export default function LeaderboardPage() {
           </div>
         )}
 
-        {/* Mobile Leaderboard Cards */}
         {!error && leaders.length > 0 && (
           <>
             <div className="space-y-4 md:hidden">
@@ -142,7 +138,6 @@ export default function LeaderboardPage() {
                   key={`${leader.name}-${index}`}
                   className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm transition hover:shadow-md sm:p-5"
                 >
-                  {/* Rank and Name */}
                   <div className="flex min-w-0 items-center gap-3">
                     <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-emerald-50 font-bold text-emerald-600">
                       {index === 0 ? (
@@ -174,7 +169,6 @@ export default function LeaderboardPage() {
                     </div>
                   </div>
 
-                  {/* Statistics */}
                   <div className="mt-4 grid grid-cols-2 gap-3 border-t border-gray-100 pt-4">
                     <div className="rounded-lg bg-gray-50 p-3">
                       <p className="text-xs text-gray-500">Volunteer Hours</p>
@@ -194,7 +188,6 @@ export default function LeaderboardPage() {
               ))}
             </div>
 
-            {/* Tablet and Desktop Leaderboard Table */}
             <div className="hidden overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm md:block">
               <div className="overflow-x-auto">
                 <table className="w-full text-left">

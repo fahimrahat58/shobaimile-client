@@ -30,7 +30,6 @@ export default function UpcomingEventsSection() {
 
         const data = await response.json();
 
-        // Show maximum 6 upcoming events
         setEvents(data.events?.slice(0, 6) || []);
       } catch (error) {
         console.error("Upcoming events error:", error);
@@ -45,7 +44,7 @@ export default function UpcomingEventsSection() {
   return (
     <section className="bg-white px-4 py-14 sm:px-6 sm:py-16 md:py-20">
       <div className="mx-auto max-w-7xl">
-        {/* Section Header */}
+        {}
         <div className="mb-8 flex flex-col gap-5 sm:mb-10 md:mb-12 md:flex-row md:items-end md:justify-between">
           <div className="min-w-0">
             <span className="text-xs font-semibold tracking-wider text-cyan-700 sm:text-sm">
@@ -69,7 +68,7 @@ export default function UpcomingEventsSection() {
           </Link>
         </div>
 
-        {/* Loading Skeleton */}
+        {}
         {loading ? (
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 lg:gap-7">
             {Array.from({ length: 6 }).map((_, index) => (
@@ -80,7 +79,6 @@ export default function UpcomingEventsSection() {
             ))}
           </div>
         ) : events.length === 0 ? (
-          /* Empty State */
           <div className="rounded-2xl bg-gray-50 px-4 py-12 text-center sm:py-16">
             <CalendarDays className="mx-auto mb-4 h-9 w-9 text-gray-400 sm:h-10 sm:w-10" />
 
@@ -93,14 +91,13 @@ export default function UpcomingEventsSection() {
             </p>
           </div>
         ) : (
-          /* Events Grid */
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 lg:gap-7">
             {events.map((event) => (
               <article
                 key={event._id}
                 className="group flex h-full flex-col overflow-hidden rounded-2xl border border-gray-100 bg-white transition duration-300 hover:-translate-y-1 hover:shadow-xl"
               >
-                {/* Event Image */}
+                {}
                 <div className="h-52 shrink-0 overflow-hidden sm:h-56">
                   <img
                     src={event.image}
@@ -109,7 +106,7 @@ export default function UpcomingEventsSection() {
                   />
                 </div>
 
-                {/* Event Content */}
+                {}
                 <div className="flex flex-1 flex-col p-4 sm:p-5 md:p-6">
                   <div>
                     <span className="inline-block max-w-full truncate rounded-full bg-cyan-50 px-3 py-1 text-xs font-semibold text-cyan-700">
@@ -121,7 +118,7 @@ export default function UpcomingEventsSection() {
                     </h3>
 
                     <div className="mt-4 space-y-3 text-sm text-gray-600 sm:mt-5">
-                      {/* Event Date */}
+                      {}
                       <p className="flex items-start gap-2">
                         <CalendarDays
                           size={17}
@@ -140,7 +137,7 @@ export default function UpcomingEventsSection() {
                         </span>
                       </p>
 
-                      {/* Event Location */}
+                      {}
                       <p className="flex items-start gap-2">
                         <MapPin
                           size={17}
@@ -154,7 +151,7 @@ export default function UpcomingEventsSection() {
                     </div>
                   </div>
 
-                  {/* Details Button */}
+                  {}
                   <Link
                     href={`/events/${event._id}`}
                     className="mt-auto mt-5 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-cyan-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-cyan-700 active:scale-[0.98] sm:mt-6 sm:text-base"

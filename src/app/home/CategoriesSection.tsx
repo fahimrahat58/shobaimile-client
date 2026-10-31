@@ -48,7 +48,6 @@ export default function CategoriesSection() {
   return (
     <section className="bg-gray-50 py-12 dark:bg-background sm:py-16 lg:py-20">
       <div className="mx-auto w-full max-w-7xl px-3 sm:px-5 lg:px-8">
-        {/* Section Heading */}
         <div className="mb-8 flex flex-col items-start gap-5 sm:mb-10 md:flex-row md:items-end md:justify-between lg:mb-12">
           <div>
             <span className="text-xs font-semibold tracking-wide text-cyan-700 dark:text-cyan-400 sm:text-sm">
@@ -73,7 +72,6 @@ export default function CategoriesSection() {
           </Link>
         </div>
 
-        {/* Categories Grid */}
         <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-6">
           {categories.map((category) => {
             const Icon = category.icon;

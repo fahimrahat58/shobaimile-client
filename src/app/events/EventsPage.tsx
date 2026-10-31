@@ -119,7 +119,6 @@ export default function EventsPage() {
   return (
     <main className="min-h-screen bg-background px-3 py-10 text-foreground sm:px-5 sm:py-14 lg:px-8 lg:py-16">
       <div className="mx-auto w-full max-w-7xl">
-        {/* Page Heading */}
         <div className="mb-8 text-center sm:mb-10">
           <Badge className="mb-3 border-0 bg-teal-100 text-teal-700 hover:bg-teal-100 dark:bg-teal-950 dark:text-teal-300 dark:hover:bg-teal-950 sm:mb-4">
             Make a Difference
@@ -135,7 +134,6 @@ export default function EventsPage() {
           </p>
         </div>
 
-        {/* Categories */}
         <section className="mb-7 sm:mb-8">
           <h2 className="mb-3 text-base font-semibold text-foreground sm:mb-4 sm:text-lg">
             Explore Categories
@@ -163,7 +161,6 @@ export default function EventsPage() {
           </div>
         </section>
 
-        {/* Search and Add Event */}
         <div className="mb-8 flex flex-col gap-3 sm:mb-10 sm:flex-row sm:gap-4">
           <div className="relative min-w-0 flex-1">
             <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground sm:left-4 sm:h-5 sm:w-5" />
@@ -196,7 +193,6 @@ export default function EventsPage() {
           </Link>
         </div>
 
-        {/* Selected Category Info */}
         {selectedCategory !== "All" && (
           <div className="mb-6 flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center">
             <div>
@@ -218,7 +214,6 @@ export default function EventsPage() {
           </div>
         )}
 
-        {/* Event List */}
         {loading ? (
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 lg:gap-8">
             {Array.from({ length: 6 }).map((_, index) => (

@@ -96,7 +96,6 @@ export default function ManageEventsPage() {
   const [hoursInput, setHoursInput] = useState<Record<string, string>>({});
   const [verifyingEmail, setVerifyingEmail] = useState<string | null>(null);
 
-  // Get tomorrow's local date
   useEffect(() => {
     const date = new Date();
     date.setDate(date.getDate() + 1);
@@ -109,7 +108,6 @@ export default function ManageEventsPage() {
 
     setMinDate(tomorrow);
   }, []);
-
   // Get authentication token
   const getToken = useCallback(async () => {
     const tokenResult = await authClient.token();
@@ -122,7 +120,6 @@ export default function ManageEventsPage() {
     return token;
   }, []);
 
-  // Fetch own events
   const fetchEvents = useCallback(async () => {
     try {
       setLoading(true);
@@ -165,7 +162,6 @@ export default function ManageEventsPage() {
     fetchEvents();
   }, [fetchEvents]);
 
-  // Validate image URL
   const isValidImageURL = (value: string) => {
     try {
       const url = new URL(value);
@@ -179,7 +175,6 @@ export default function ManageEventsPage() {
     }
   };
 
-  // Validate edit form
   const validateForm = () => {
     const title = formData.title.trim();
     const description = formData.description.trim();
@@ -275,7 +270,6 @@ export default function ManageEventsPage() {
     return true;
   };
 
-  // Open edit dialog
   const openEditDialog = (event: Event) => {
     setEditingEvent(event);
 
@@ -293,7 +287,6 @@ export default function ManageEventsPage() {
     );
   };
 
-  // Close edit dialog
   const closeEditDialog = () => {
     if (saving) return;
 
@@ -302,7 +295,6 @@ export default function ManageEventsPage() {
     setVolunteerGuidelines([""]);
   };
 
-  // Handle form changes
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
   ) => {
@@ -314,14 +306,12 @@ export default function ManageEventsPage() {
     }));
   };
 
-  // Handle guideline changes
   const handleGuidelineChange = (index: number, value: string) => {
     setVolunteerGuidelines((prev) =>
       prev.map((item, i) => (i === index ? value : item)),
     );
   };
 
-  // Add guideline
   const addGuideline = () => {
     if (volunteerGuidelines.length >= 10) {
       toast.error("Maximum 10 guidelines allowed");
@@ -331,12 +321,10 @@ export default function ManageEventsPage() {
     setVolunteerGuidelines((prev) => [...prev, ""]);
   };
 
-  // Remove guideline
   const removeGuideline = (index: number) => {
     setVolunteerGuidelines((prev) => prev.filter((_, i) => i !== index));
   };
 
-  // Update event
   const handleUpdate = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -398,7 +386,6 @@ export default function ManageEventsPage() {
     }
   };
 
-  // Delete event
   const handleDelete = async (id: string) => {
     if (!API_URL) {
       toast.error("API URL is not configured");
@@ -436,7 +423,6 @@ export default function ManageEventsPage() {
     }
   };
 
-  // Fetch event participants
   const fetchParticipants = async (event: Event) => {
     if (!API_URL) {
       toast.error("API URL is not configured");
@@ -478,7 +464,6 @@ export default function ManageEventsPage() {
     }
   };
 
-  // Close participants modal
   const closeParticipantsModal = () => {
     if (verifyingEmail) return;
 
@@ -487,7 +472,6 @@ export default function ManageEventsPage() {
     setHoursInput({});
   };
 
-  // Handle volunteer hours input
   const handleHoursChange = (email: string, value: string) => {
     setHoursInput((prev) => ({
       ...prev,
@@ -495,7 +479,6 @@ export default function ManageEventsPage() {
     }));
   };
 
-  // Verify volunteer attendance
   const handleVerifyAttendance = async (userEmail: string) => {
     if (!selectedEvent || !API_URL) {
       toast.error("Unable to verify attendance");
@@ -556,7 +539,6 @@ export default function ManageEventsPage() {
     }
   };
 
-  // Loading screen
   if (loading) {
     return (
       <main className="flex min-h-[70vh] items-center justify-center px-4">
@@ -568,7 +550,6 @@ export default function ManageEventsPage() {
   return (
     <main className="min-h-screen bg-gray-50 px-3 py-6 sm:px-5 sm:py-8 lg:px-6 lg:py-12">
       <div className="mx-auto max-w-7xl">
-        {/* Page Header */}
         <div className="mb-7 flex flex-col items-start justify-between gap-5 sm:mb-10 sm:flex-row sm:items-center">
           <div className="min-w-0">
             <span className="text-sm font-semibold text-cyan-700">
@@ -593,7 +574,6 @@ export default function ManageEventsPage() {
           </Link>
         </div>
 
-        {/* Total Events */}
         <div className="mb-6 rounded-xl border border-cyan-100 bg-cyan-50 p-4 sm:mb-8 sm:p-5">
           <p className="text-sm text-cyan-800">Total Events Created</p>
 
@@ -602,7 +582,6 @@ export default function ManageEventsPage() {
           </p>
         </div>
 
-        {/* Events List */}
         {events.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-gray-300 bg-white px-4 py-12 text-center sm:px-6 sm:py-16">
             <CalendarDays
@@ -677,7 +656,6 @@ export default function ManageEventsPage() {
                   </div>
 
                   <div className="mt-auto">
-                    {/* Delete Confirmation */}
                     {confirmingDeleteId === event._id ? (
                       <div className="mt-6 rounded-lg border border-red-100 bg-red-50 p-3 sm:p-4">
                         <p className="text-sm font-medium text-red-800">
@@ -744,7 +722,6 @@ export default function ManageEventsPage() {
         )}
       </div>
 
-      {/* Edit Event Modal */}
       {editingEvent && (
         <div className="fixed inset-0 z-[100] flex items-start justify-center overflow-y-auto bg-black/50 p-2 sm:items-center sm:p-4">
           <div className="my-auto w-full max-w-2xl rounded-xl bg-white p-4 shadow-xl sm:rounded-2xl sm:p-6 md:p-8">
@@ -771,7 +748,6 @@ export default function ManageEventsPage() {
             </div>
 
             <form onSubmit={handleUpdate} className="space-y-4">
-              {/* Event Title */}
               <div>
                 <label className="mb-2 block text-sm font-semibold text-gray-700">
                   Event Title
@@ -795,7 +771,6 @@ export default function ManageEventsPage() {
                 </p>
               </div>
 
-              {/* Description */}
               <div>
                 <label className="mb-2 block text-sm font-semibold text-gray-700">
                   Description
@@ -819,7 +794,6 @@ export default function ManageEventsPage() {
                 </p>
               </div>
 
-              {/* Volunteer Guidelines */}
               <div className="rounded-xl border border-cyan-100 bg-cyan-50/40 p-3 sm:p-5">
                 <div className="mb-3 flex items-center justify-between gap-2">
                   <label className="block text-sm font-semibold text-gray-700">
@@ -885,7 +859,6 @@ export default function ManageEventsPage() {
                 </p>
               </div>
 
-              {/* Category */}
               <div>
                 <label className="mb-2 block text-sm font-semibold text-gray-700">
                   Category
@@ -910,7 +883,6 @@ export default function ManageEventsPage() {
                 </select>
               </div>
 
-              {/* Image URL */}
               <div>
                 <label className="mb-2 block text-sm font-semibold text-gray-700">
                   Image URL
@@ -932,7 +904,6 @@ export default function ManageEventsPage() {
                 </p>
               </div>
 
-              {/* Location */}
               <div>
                 <label className="mb-2 block text-sm font-semibold text-gray-700">
                   Location
@@ -956,7 +927,6 @@ export default function ManageEventsPage() {
                 </p>
               </div>
 
-              {/* Event Date */}
               <div>
                 <label className="mb-2 flex items-center gap-2 text-sm font-semibold text-gray-700">
                   <CalendarDays size={17} />
@@ -979,7 +949,6 @@ export default function ManageEventsPage() {
                 </p>
               </div>
 
-              {/* Buttons */}
               <div className="flex flex-col-reverse gap-2 pt-2 sm:flex-row sm:justify-end sm:gap-3">
                 <button
                   type="button"
@@ -1013,11 +982,9 @@ export default function ManageEventsPage() {
         </div>
       )}
 
-      {/* Participants Modal */}
       {selectedEvent && (
         <div className="fixed inset-0 z-[110] flex items-start justify-center overflow-y-auto bg-black/60 p-2 sm:items-center sm:p-4">
           <div className="my-auto max-h-[95vh] w-full max-w-3xl overflow-y-auto rounded-xl bg-white p-3 shadow-2xl sm:max-h-[90vh] sm:rounded-2xl sm:p-5 md:p-8">
-            {/* Modal Header */}
             <div className="mb-5 flex items-start justify-between gap-3 sm:mb-6 sm:gap-4">
               <div className="min-w-0">
                 <div className="flex flex-wrap items-center gap-2 text-cyan-700">
@@ -1047,7 +1014,6 @@ export default function ManageEventsPage() {
               </button>
             </div>
 
-            {/* Participant Count */}
             {!participantsLoading && (
               <div className="mb-5 grid grid-cols-2 gap-2 sm:gap-3">
                 <div className="rounded-xl bg-cyan-50 p-3 sm:p-4">
@@ -1070,7 +1036,6 @@ export default function ManageEventsPage() {
               </div>
             )}
 
-            {/* Loading */}
             {participantsLoading ? (
               <div className="flex min-h-48 items-center justify-center">
                 <Loader2 size={35} className="animate-spin text-cyan-600" />
@@ -1095,7 +1060,6 @@ export default function ManageEventsPage() {
                     className="rounded-xl border border-gray-200 p-3 transition hover:border-cyan-200 sm:p-4"
                   >
                     <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
-                      {/* Volunteer Information */}
                       <div className="flex min-w-0 items-center gap-2 sm:gap-3">
                         {participant.image ? (
                           <img
@@ -1121,7 +1085,6 @@ export default function ManageEventsPage() {
                         </div>
                       </div>
 
-                      {/* Verification Status */}
                       <div className="shrink-0">
                         {participant.verified ? (
                           <span className="inline-flex items-center gap-1 rounded-full bg-green-100 px-3 py-2 text-xs font-semibold text-green-700">
@@ -1137,7 +1100,6 @@ export default function ManageEventsPage() {
                       </div>
                     </div>
 
-                    {/* Verified Information */}
                     {participant.verified ? (
                       <div className="mt-4 flex flex-wrap gap-2 border-t border-gray-100 pt-4 sm:gap-3">
                         <div className="flex items-center gap-2 rounded-lg bg-cyan-50 px-3 py-2 text-xs text-cyan-800 sm:text-sm">
@@ -1151,7 +1113,6 @@ export default function ManageEventsPage() {
                         </div>
                       </div>
                     ) : (
-                      /* Verify Attendance Form */
                       <div className="mt-4 border-t border-gray-100 pt-4">
                         <label className="mb-2 block text-sm font-semibold text-gray-700">
                           Volunteer Hours
@@ -1208,7 +1169,6 @@ export default function ManageEventsPage() {
               </div>
             )}
 
-            {/* Modal Footer */}
             <div className="mt-5 flex justify-end border-t border-gray-100 pt-4 sm:mt-6 sm:pt-5">
               <button
                 type="button"

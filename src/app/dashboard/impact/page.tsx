@@ -70,7 +70,6 @@ export default function ImpactPage() {
   return (
     <main className="min-h-screen bg-gray-50 px-3 py-6 sm:px-6 sm:py-10 lg:px-10">
       <div className="mx-auto w-full max-w-7xl">
-        {/* Header */}
         <div className="mb-6 sm:mb-8">
           <p className="text-sm font-semibold text-emerald-600 sm:text-base">
             ShobaiMile
@@ -85,7 +84,6 @@ export default function ImpactPage() {
           </p>
         </div>
 
-        {/* Impact Statistics */}
         <div className="min-w-0">
           <ImpactStats
             totalPoints={impact.totalPoints}
@@ -94,18 +92,19 @@ export default function ImpactPage() {
           />
         </div>
 
-        {/* Badge and Progress */}
         <div className="mt-5 grid min-w-0 grid-cols-1 gap-4 sm:mt-6 sm:gap-6 lg:grid-cols-2">
           <div className="min-w-0">
             <ImpactBadge badge={impact.badge} />
           </div>
 
           <div className="min-w-0">
-            <ImpactProgress
-              totalPoints={impact.totalPoints}
-              nextMilestone={impact.nextMilestone}
-              pointsToNextMilestone={impact.pointsToNextMilestone}
-            />
+            {impact.nextMilestone !== null && (
+              <ImpactProgress
+                totalPoints={impact.totalPoints}
+                nextMilestone={impact.nextMilestone}
+                pointsToNextMilestone={impact.pointsToNextMilestone}
+              />
+            )}
           </div>
         </div>
       </div>

@@ -1,14 +1,22 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
 import { Eye, EyeOff, Loader2, Mail, Lock } from "lucide-react";
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const rawCallbackUrl = searchParams.get("callbackUrl");
+
+  const callbackUrl =
+    rawCallbackUrl?.startsWith("/") && !rawCallbackUrl.startsWith("//")
+      ? rawCallbackUrl
+      : "/";
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -16,7 +24,6 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
 
-  // Email Login
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -52,7 +59,7 @@ export default function LoginPage() {
 
       toast.success("Login successful!");
 
-      router.replace("/");
+      router.replace(callbackUrl);
       router.refresh();
     } catch {
       toast.error("Something went wrong. Please try again.");
@@ -61,14 +68,13 @@ export default function LoginPage() {
     }
   };
 
-  // Google Login
   const handleGoogleLogin = async () => {
     try {
       setGoogleLoading(true);
 
       await authClient.signIn.social({
         provider: "google",
-        callbackURL: "/",
+        callbackURL: callbackUrl,
       });
     } catch {
       toast.error("Google login failed. Please try again.");
@@ -79,7 +85,6 @@ export default function LoginPage() {
   return (
     <main className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-8 sm:px-6 sm:py-12">
       <div className="w-full max-w-md rounded-2xl border border-gray-100 bg-white p-5 shadow-lg sm:p-7 md:p-8">
-        {/* Header */}
         <div className="mb-6 text-center sm:mb-7">
           <h1 className="text-2xl font-bold text-gray-900 sm:text-3xl">
             Welcome Back
@@ -90,9 +95,7 @@ export default function LoginPage() {
           </p>
         </div>
 
-        {/* Login Form */}
         <form onSubmit={handleLogin} className="space-y-4 sm:space-y-5">
-          {/* Email */}
           <div>
             <label
               htmlFor="email"
@@ -121,7 +124,6 @@ export default function LoginPage() {
             </div>
           </div>
 
-          {/* Password */}
           <div>
             <label
               htmlFor="password"
@@ -148,7 +150,6 @@ export default function LoginPage() {
                 className="h-12 w-full min-w-0 rounded-lg border border-gray-200 py-3 pr-12 pl-10 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-cyan-600 focus:ring-2 focus:ring-cyan-100 disabled:bg-gray-100 sm:text-base"
               />
 
-              {/* Show / Hide Password */}
               <button
                 type="button"
                 onClick={() => setShowPassword((prev) => !prev)}
@@ -162,7 +163,6 @@ export default function LoginPage() {
             </div>
           </div>
 
-          {/* Login Button */}
           <button
             type="submit"
             disabled={loading || googleLoading}
@@ -179,7 +179,6 @@ export default function LoginPage() {
           </button>
         </form>
 
-        {/* Divider */}
         <div className="relative my-5 sm:my-6">
           <div className="absolute inset-0 flex items-center">
             <div className="w-full border-t border-gray-200" />
@@ -192,7 +191,6 @@ export default function LoginPage() {
           </div>
         </div>
 
-        {/* Google Login Button */}
         <button
           type="button"
           onClick={handleGoogleLogin}
@@ -232,7 +230,6 @@ export default function LoginPage() {
           </span>
         </button>
 
-        {/* Register Link */}
         <p className="mt-6 text-center text-xs text-gray-600 sm:mt-7 sm:text-sm">
           Don&apos;t have an account?{" "}
           <Link
@@ -244,5 +241,19 @@ export default function LoginPage() {
         </p>
       </div>
     </main>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense
+      fallback={
+        <main className="flex min-h-screen items-center justify-center bg-gray-50">
+          <Loader2 size={30} className="animate-spin text-cyan-600" />
+        </main>
+      }
+    >
+      <LoginForm />
+    </Suspense>
   );
 }

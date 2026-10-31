@@ -67,7 +67,6 @@ export default function EventDetailsContent() {
 
   const isMountedRef = useRef(false);
 
-  // Fetch Event Details
   useEffect(() => {
     let isMounted = true;
     isMountedRef.current = true;
@@ -136,7 +135,6 @@ export default function EventDetailsContent() {
     };
   }, [eventId]);
 
-  // Check Already Joined
   useEffect(() => {
     let isMounted = true;
 
@@ -201,7 +199,6 @@ export default function EventDetailsContent() {
     };
   }, [eventId, session?.user?.email, isPending]);
 
-  // Join Event
   const handleJoinEvent = async () => {
     if (isPending) {
       toast.info("Please Wait...");
@@ -291,7 +288,6 @@ export default function EventDetailsContent() {
     }
   };
 
-  // Share Event
   const handleShare = async () => {
     try {
       const shareUrl = window.location.href;
@@ -318,7 +314,6 @@ export default function EventDetailsContent() {
     }
   };
 
-  // Loading State
   if (loading) {
     return (
       <div className="min-h-screen animate-pulse bg-background px-3 py-6 sm:px-6 sm:py-10">
@@ -331,7 +326,6 @@ export default function EventDetailsContent() {
     );
   }
 
-  // Error State
   if (error || !event) {
     return (
       <main className="flex min-h-[60vh] flex-col items-center justify-center bg-background px-4 text-center text-foreground">
@@ -383,7 +377,6 @@ export default function EventDetailsContent() {
   return (
     <main className="min-h-screen bg-slate-50 px-3 py-5 text-slate-900 dark:bg-background dark:text-foreground sm:px-6 sm:py-8 lg:px-10">
       <div className="mx-auto w-full max-w-6xl">
-        {/* Back Button */}
         <button
           onClick={() => router.push("/events")}
           className="mb-4 flex items-center gap-2 text-xs font-medium text-slate-500 transition hover:text-teal-600 sm:mb-5 sm:text-sm"
@@ -393,7 +386,6 @@ export default function EventDetailsContent() {
         </button>
 
         <article className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm sm:rounded-2xl dark:border-border dark:bg-card">
-          {/* Hero Section */}
           <div className="relative h-[240px] overflow-hidden sm:h-[360px] md:h-[420px] lg:h-[460px]">
             {event.image ? (
               <img
@@ -407,7 +399,6 @@ export default function EventDetailsContent() {
 
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-black/10" />
 
-            {/* Category */}
             <div className="absolute left-3 top-3 sm:left-5 sm:top-5">
               <Badge className="border-0 bg-white px-2.5 py-1 text-[10px] font-semibold text-slate-800 hover:bg-white sm:px-3 sm:text-xs">
                 <HandHeart className="mr-1.5 h-3.5 w-3.5 text-teal-600" />
@@ -415,7 +406,6 @@ export default function EventDetailsContent() {
               </Badge>
             </div>
 
-            {/* Hero Information */}
             <div className="absolute bottom-0 left-0 w-full p-3 sm:p-6 md:p-8">
               <h1 className="max-w-3xl break-words text-xl font-extrabold text-white sm:text-3xl md:text-4xl lg:text-5xl">
                 {event.title}
@@ -436,7 +426,6 @@ export default function EventDetailsContent() {
           </div>
 
           <div className="p-3 sm:p-6 md:p-8">
-            {/* Volunteer Count and Join Bar */}
             <div className="mb-6 flex flex-col gap-4 rounded-xl border border-slate-200 bg-slate-50 p-3 sm:mb-8 sm:flex-row sm:items-center sm:justify-between sm:p-4 md:px-5 dark:border-border dark:bg-muted/30">
               <div className="flex min-w-0 items-center gap-3">
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-teal-100 text-teal-700 dark:bg-teal-950 dark:text-teal-300">
@@ -481,11 +470,8 @@ export default function EventDetailsContent() {
               </div>
             </div>
 
-            {/* Main Content Grid */}
             <div className="grid grid-cols-1 gap-6 sm:gap-8 md:grid-cols-[minmax(0,1fr)_280px] md:gap-10">
-              {/* Left Side */}
               <div className="min-w-0">
-                {/* About Section */}
                 <section>
                   <h2 className="text-base font-bold text-slate-900 sm:text-lg dark:text-foreground">
                     About this Social Initiative
@@ -496,7 +482,6 @@ export default function EventDetailsContent() {
                   </p>
                 </section>
 
-                {/* Volunteer Guidelines */}
                 <section className="mt-6 sm:mt-7">
                   <div className="mb-4 flex items-center gap-2">
                     <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-teal-50 text-teal-700 dark:bg-teal-950 dark:text-teal-300">
@@ -532,7 +517,6 @@ export default function EventDetailsContent() {
                 </section>
               </div>
 
-              {/* Right Side - Organizer Card */}
               <aside className="min-w-0">
                 <div className="rounded-xl border border-slate-200 bg-white p-3 sm:p-4 dark:border-border dark:bg-card">
                   <h3 className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-muted-foreground">
@@ -574,7 +558,6 @@ export default function EventDetailsContent() {
                   </div>
                 </div>
 
-                {/* Event Reminder */}
                 <div className="mt-4 rounded-xl border border-teal-100 bg-teal-50/70 p-3 sm:p-4 dark:border-teal-900 dark:bg-teal-950/30">
                   <div className="flex items-center gap-2">
                     <HandHeart className="h-4 w-4 shrink-0 text-teal-700 dark:text-teal-300" />
@@ -592,7 +575,6 @@ export default function EventDetailsContent() {
               </aside>
             </div>
 
-            {/* Bottom Join Section */}
             <div className="mt-6 rounded-xl border border-slate-200 bg-slate-50 p-3 sm:mt-9 sm:p-5 dark:border-border dark:bg-muted/30">
               <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div className="min-w-0">

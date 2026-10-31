@@ -81,7 +81,6 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-background/95 text-foreground shadow-sm backdrop-blur-md">
       <nav className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-2 px-3 py-2.5 sm:gap-3 sm:px-4 sm:py-3">
-        {/* Logo */}
         <Link
           href="/"
           className="shrink-0 text-lg font-extrabold tracking-tight text-cyan-700 transition hover:text-cyan-600 sm:text-2xl dark:text-cyan-400"
@@ -89,7 +88,6 @@ export default function Navbar() {
           ShobaiMile
         </Link>
 
-        {/* Desktop Navigation */}
         <div className="hidden flex-1 items-center justify-center gap-5 text-sm font-semibold md:flex">
           <Link
             href="/"
@@ -108,9 +106,7 @@ export default function Navbar() {
           </Link>
         </div>
 
-        {/* Right Side */}
         <div className="flex shrink-0 items-center gap-1.5 sm:gap-3">
-          {/* Theme Toggle */}
           {mounted && (
             <button
               type="button"
@@ -127,7 +123,6 @@ export default function Navbar() {
             </button>
           )}
 
-          {/* Authentication */}
           {!isPending &&
             (user ? (
               <DropdownMenu>
@@ -145,7 +140,6 @@ export default function Navbar() {
                     )}
                   </div>
 
-                  {/* Username */}
                   <span
                     className="max-w-0 overflow-hidden whitespace-nowrap text-xs font-semibold opacity-0 transition-all duration-300 group-hover:max-w-[110px] group-hover:opacity-100 sm:text-sm sm:group-hover:max-w-[180px]"
                     title={user.name || "My Account"}
@@ -161,7 +155,6 @@ export default function Navbar() {
                   sideOffset={8}
                   className="max-h-[75vh] w-[min(240px,calc(100vw-24px))] overflow-y-auto rounded-xl border border-border bg-card p-1.5 shadow-lg sm:w-60"
                 >
-                  {/* User Information */}
                   <div className="flex items-center gap-2.5 px-2 py-2">
                     <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-gradient-to-br from-cyan-400 to-blue-600 text-white">
                       {user.image ? (
@@ -188,7 +181,6 @@ export default function Navbar() {
 
                   <DropdownMenuSeparator className="my-1" />
 
-                  {/* Profile */}
                   <DropdownMenuItem
                     className={menuItemClass}
                     onClick={() => router.push("/profile")}
@@ -197,7 +189,6 @@ export default function Navbar() {
                     Profile
                   </DropdownMenuItem>
 
-                  {/* Create Event */}
                   <DropdownMenuItem
                     className={menuItemClass}
                     onClick={() => router.push("/create-event")}
@@ -206,7 +197,6 @@ export default function Navbar() {
                     Create Event
                   </DropdownMenuItem>
 
-                  {/* Manage Events */}
                   <DropdownMenuItem
                     className={menuItemClass}
                     onClick={() => router.push("/manage-events")}
@@ -215,7 +205,6 @@ export default function Navbar() {
                     Manage Events
                   </DropdownMenuItem>
 
-                  {/* Joined Events */}
                   <DropdownMenuItem
                     className={menuItemClass}
                     onClick={() => router.push("/joined-events")}
@@ -226,7 +215,6 @@ export default function Navbar() {
 
                   <DropdownMenuSeparator className="my-1" />
 
-                  {/* Impact Dashboard */}
                   <DropdownMenuItem
                     className={menuItemClass}
                     onClick={() => router.push("/dashboard/impact")}
@@ -235,7 +223,6 @@ export default function Navbar() {
                     Impact Dashboard
                   </DropdownMenuItem>
 
-                  {/* Leaderboard */}
                   <DropdownMenuItem
                     className={menuItemClass}
                     onClick={() => router.push("/leaderboard")}
@@ -244,7 +231,6 @@ export default function Navbar() {
                     Leaderboard
                   </DropdownMenuItem>
 
-                  {/* Certificates */}
                   <DropdownMenuItem
                     className={menuItemClass}
                     onClick={() => router.push("/certificates")}
@@ -255,7 +241,6 @@ export default function Navbar() {
 
                   <DropdownMenuSeparator className="my-1" />
 
-                  {/* Logout */}
                   <DropdownMenuItem
                     disabled={loggingOut}
                     className={`${menuItemClass} text-red-600 focus:bg-red-50 focus:text-red-600 dark:text-red-400 dark:focus:bg-red-500/10 dark:focus:text-red-400`}
@@ -273,7 +258,6 @@ export default function Navbar() {
               </DropdownMenu>
             ) : (
               <>
-                {/* Login */}
                 <Link
                   href="/login"
                   className="rounded-lg px-2.5 py-2 text-xs font-semibold text-muted-foreground transition hover:bg-muted hover:text-cyan-600 sm:px-3 sm:text-sm"
@@ -281,7 +265,6 @@ export default function Navbar() {
                   Login
                 </Link>
 
-                {/* Register */}
                 <Link
                   href="/register"
                   className="rounded-lg bg-cyan-600 px-3 py-2 text-xs font-semibold text-white transition hover:bg-cyan-700 sm:px-3.5 sm:text-sm"
@@ -292,7 +275,6 @@ export default function Navbar() {
             ))}
         </div>
 
-        {/* Mobile Navigation */}
         <div className="order-3 flex w-full items-center justify-center gap-6 border-t border-border pt-2 text-xs font-semibold md:hidden sm:text-sm">
           <Link
             href="/"

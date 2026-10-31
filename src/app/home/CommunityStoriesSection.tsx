@@ -25,7 +25,6 @@ export default function CommunityStoriesSection() {
   return (
     <section className="bg-gray-50 py-12 dark:bg-background sm:py-16 lg:py-20">
       <div className="mx-auto w-full max-w-7xl px-3 sm:px-5 lg:px-8">
-        {/* Section Heading */}
         <div className="mx-auto mb-8 max-w-2xl px-2 text-center sm:mb-10 lg:mb-12">
           <span className="text-xs font-semibold tracking-wide text-cyan-700 dark:text-cyan-400 sm:text-sm">
             COMMUNITY VOICES
@@ -40,7 +39,6 @@ export default function CommunityStoriesSection() {
           </p>
         </div>
 
-        {/* Stories Grid */}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 lg:gap-6">
           {stories.map((story) => (
             <article

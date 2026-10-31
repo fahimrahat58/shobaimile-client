@@ -35,7 +35,6 @@ export default function CertificatesPage() {
   const [error, setError] = useState("");
   const [downloading, setDownloading] = useState("");
 
-  // Get JWT token
   const getToken = async () => {
     const { data, error } = await authClient.token();
 
@@ -46,7 +45,6 @@ export default function CertificatesPage() {
     return data.token;
   };
 
-  // Load certificates
   useEffect(() => {
     if (isPending) return;
 
@@ -87,7 +85,6 @@ export default function CertificatesPage() {
     loadCertificates();
   }, [session, isPending, router]);
 
-  // Download certificate PDF
   async function handleDownload(certificateId: string) {
     try {
       setDownloading(certificateId);
@@ -112,9 +109,7 @@ export default function CertificatesPage() {
         try {
           const result = await response.json();
           message = result.message || message;
-        } catch {
-          // Response may not contain JSON.
-        }
+        } catch {}
 
         throw new Error(message);
       }
@@ -143,7 +138,6 @@ export default function CertificatesPage() {
     }
   }
 
-  // Session loading
   if (isPending || loading) {
     return (
       <div className="flex min-h-[60vh] items-center justify-center px-4">
@@ -155,7 +149,6 @@ export default function CertificatesPage() {
   return (
     <main className="min-h-screen bg-gray-50 px-3 py-6 sm:px-6 sm:py-10 lg:px-10">
       <div className="mx-auto w-full max-w-7xl">
-        {/* Header */}
         <div className="mb-6 sm:mb-8">
           <p className="text-sm font-semibold text-emerald-600 sm:text-base">
             ShobaiMile
@@ -170,7 +163,6 @@ export default function CertificatesPage() {
           </p>
         </div>
 
-        {/* Error */}
         {error && (
           <div className="flex items-start gap-3 rounded-xl bg-red-50 p-3 text-sm text-red-600 sm:p-4 sm:text-base">
             <AlertCircle className="mt-0.5 h-5 w-5 shrink-0" />
@@ -178,7 +170,6 @@ export default function CertificatesPage() {
           </div>
         )}
 
-        {/* Empty State */}
         {!error && certificates.length === 0 && (
           <div className="rounded-2xl border border-gray-200 bg-white px-4 py-8 text-center shadow-sm sm:px-8 sm:py-12">
             <FileX className="mx-auto h-10 w-10 text-gray-300 sm:h-12 sm:w-12" />
@@ -194,7 +185,6 @@ export default function CertificatesPage() {
           </div>
         )}
 
-        {/* Certificates */}
         {!error && certificates.length > 0 && (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 lg:gap-6 xl:grid-cols-4">
             {certificates.map((certificate) => (

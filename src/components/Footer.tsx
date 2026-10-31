@@ -5,7 +5,6 @@ export default function Footer() {
   return (
     <footer className="bg-gray-950 text-gray-300">
       <div className="mx-auto grid max-w-7xl grid-cols-1 gap-8 px-4 py-10 sm:grid-cols-2 sm:gap-10 sm:px-6 sm:py-12 lg:grid-cols-4 lg:gap-12 lg:px-8 lg:py-14">
-        {/* Brand */}
         <div>
           <Link
             href="/"
@@ -21,7 +20,6 @@ export default function Footer() {
           </p>
         </div>
 
-        {/* Explore */}
         <div>
           <h3 className="mb-4 font-bold text-white sm:mb-5">Explore</h3>
 
@@ -52,7 +50,6 @@ export default function Footer() {
           </ul>
         </div>
 
-        {/* Account */}
         <div>
           <h3 className="mb-4 font-bold text-white sm:mb-5">Account</h3>
 
@@ -86,12 +83,10 @@ export default function Footer() {
           </ul>
         </div>
 
-        {/* Social Links */}
         <div>
           <h3 className="mb-4 font-bold text-white sm:mb-5">Follow Us</h3>
 
           <div className="flex flex-wrap gap-3">
-            {/* Facebook */}
             <a
               href="https://facebook.com/"
               target="_blank"
@@ -102,7 +97,6 @@ export default function Footer() {
               <UsersRound size={19} />
             </a>
 
-            {/* Instagram */}
             <a
               href="https://instagram.com/"
               target="_blank"
@@ -113,7 +107,6 @@ export default function Footer() {
               <Camera size={19} />
             </a>
 
-            {/* GitHub */}
             <a
               href="https://github.com/"
               target="_blank"
@@ -124,7 +117,6 @@ export default function Footer() {
               <Code2 size={19} />
             </a>
 
-            {/* Official X Logo */}
             <a
               href="https://x.com/"
               target="_blank"
@@ -146,7 +138,6 @@ export default function Footer() {
         </div>
       </div>
 
-      {/* Copyright */}
       <div className="border-t border-gray-800 px-4 py-5 text-center text-xs text-gray-500 sm:px-6 sm:py-6 sm:text-sm">
         © 2026 ShobaiMile. All rights reserved.
       </div>
