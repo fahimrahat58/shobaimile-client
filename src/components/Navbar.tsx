@@ -1,7 +1,11 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useTheme } from "next-themes";
+import { Sun, Moon } from "lucide-react";
+
 import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
 
@@ -16,6 +20,13 @@ import {
 export default function Navbar() {
   const router = useRouter();
   const { data: session, isPending } = authClient.useSession();
+
+  const { resolvedTheme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const handleLogout = async () => {
     try {
@@ -34,16 +45,20 @@ export default function Navbar() {
     }
   };
 
+  const toggleTheme = () => {
+    setTheme(resolvedTheme === "dark" ? "light" : "dark");
+  };
+
   return (
-    <header className="sticky top-0 z-50 border-b border-gray-200 bg-white">
+    <header className="sticky top-0 z-50 border-b border-border bg-background text-foreground">
       <nav className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4">
         {/* Logo */}
-        <Link href="/" className="text-2xl font-bold text-cyan-700">
+        <Link href="/" className="shrink-0 text-2xl font-bold text-cyan-700">
           ShobaiMile
         </Link>
 
-        {/* Navigation */}
-        <div className="flex items-center gap-4 text-sm font-medium">
+        {/* Center Navigation */}
+        <div className="flex flex-1 items-center justify-center gap-4 text-sm font-medium">
           <Link href="/" className="transition hover:text-cyan-700">
             Home
           </Link>
@@ -51,6 +66,34 @@ export default function Navbar() {
           <Link href="/events" className="transition hover:text-cyan-700">
             Upcoming Events
           </Link>
+        </div>
+
+        {/* Right Side: Theme Toggle + Auth */}
+        <div className="flex shrink-0 items-center gap-3">
+          {/* Theme Toggle */}
+          {mounted && (
+            <button
+              type="button"
+              onClick={toggleTheme}
+              aria-label={
+                resolvedTheme === "dark"
+                  ? "Switch to light mode"
+                  : "Switch to dark mode"
+              }
+              title={
+                resolvedTheme === "dark"
+                  ? "Switch to light mode"
+                  : "Switch to dark mode"
+              }
+              className="flex h-10 w-10 items-center justify-center rounded-md border border-border bg-background transition hover:bg-muted"
+            >
+              {resolvedTheme === "dark" ? (
+                <Sun className="h-5 w-5 text-amber-400" />
+              ) : (
+                <Moon className="h-5 w-5 text-slate-700" />
+              )}
+            </button>
+          )}
 
           {!isPending &&
             (session?.user ? (
@@ -60,7 +103,6 @@ export default function Navbar() {
                 </DropdownMenuTrigger>
 
                 <DropdownMenuContent align="end" className="w-56">
-                  {/* Existing Links */}
                   <DropdownMenuItem
                     className="cursor-pointer"
                     onClick={() => router.push("/profile")}
@@ -89,7 +131,6 @@ export default function Navbar() {
                     Joined Events
                   </DropdownMenuItem>
 
-                  {/* Impact & Achievement Links */}
                   <DropdownMenuSeparator />
 
                   <DropdownMenuItem
@@ -113,7 +154,6 @@ export default function Navbar() {
                     📜 My Certificates
                   </DropdownMenuItem>
 
-                  {/* Logout */}
                   <DropdownMenuSeparator />
 
                   <DropdownMenuItem

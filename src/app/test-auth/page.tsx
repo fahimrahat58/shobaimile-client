@@ -23,14 +23,14 @@ export default function TestAuthPage() {
         );
       }
 
-      const response = await fetch(
-        "http://localhost:5000/api/protected",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
+   const response = await fetch(
+  "http://localhost:5000/api/events/my-events",
+  {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  },
+);
 
       const data = await response.json();
 

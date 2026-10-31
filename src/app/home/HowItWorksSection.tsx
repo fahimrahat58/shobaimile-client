@@ -26,14 +26,18 @@ const steps = [
 
 export default function HowItWorksSection() {
   return (
-    <section className="bg-cyan-50 py-20">
+    <section className="bg-cyan-50 py-20 dark:bg-background">
       <div className="mx-auto max-w-7xl px-4">
         <div className="mx-auto mb-14 max-w-2xl text-center">
-          <span className="font-semibold text-cyan-700">GET STARTED</span>
-          <h2 className="mt-3 text-3xl font-bold text-gray-900 md:text-4xl">
+          <span className="font-semibold text-cyan-700 dark:text-cyan-400">
+            GET STARTED
+          </span>
+
+          <h2 className="mt-3 text-3xl font-bold text-gray-900 dark:text-foreground md:text-4xl">
             Making a Difference Is Simple
           </h2>
-          <p className="mt-4 leading-7 text-gray-600">
+
+          <p className="mt-4 leading-7 text-gray-600 dark:text-muted-foreground">
             Three simple steps to start contributing to your community.
           </p>
         </div>
@@ -45,22 +49,23 @@ export default function HowItWorksSection() {
             return (
               <div
                 key={step.number}
-                className="rounded-2xl bg-white p-8 shadow-sm"
+                className="rounded-2xl border border-transparent bg-white p-8 shadow-sm transition hover:-translate-y-1 hover:shadow-lg dark:border-border dark:bg-card"
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-4xl font-bold text-cyan-100">
+                  <span className="text-4xl font-bold text-cyan-100 dark:text-cyan-900">
                     {step.number}
                   </span>
-                  <div className="rounded-xl bg-cyan-100 p-4 text-cyan-700">
+
+                  <div className="rounded-xl bg-cyan-100 p-4 text-cyan-700 dark:bg-cyan-950 dark:text-cyan-300">
                     <Icon size={28} />
                   </div>
                 </div>
 
-                <h3 className="mt-7 text-xl font-bold text-gray-900">
+                <h3 className="mt-7 text-xl font-bold text-gray-900 dark:text-card-foreground">
                   {step.title}
                 </h3>
 
-                <p className="mt-3 leading-7 text-gray-600">
+                <p className="mt-3 leading-7 text-gray-600 dark:text-muted-foreground">
                   {step.description}
                 </p>
               </div>
@@ -71,7 +76,7 @@ export default function HowItWorksSection() {
         <div className="mt-10 text-center">
           <Link
             href="/register"
-            className="inline-flex items-center gap-2 rounded-lg bg-cyan-600 px-6 py-3 font-semibold text-white hover:bg-cyan-700"
+            className="inline-flex items-center gap-2 rounded-lg bg-cyan-600 px-6 py-3 font-semibold text-white transition-colors hover:bg-cyan-700"
           >
             Get Started <ArrowRight size={18} />
           </Link>
