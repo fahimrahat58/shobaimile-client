@@ -2,7 +2,19 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { CalendarDays, MapPin, ArrowLeft, Users } from "lucide-react";
+import {
+  CalendarDays,
+  MapPin,
+  ArrowLeft,
+  Users,
+  UserRound,
+  ShieldCheck,
+  Mail,
+  Share2,
+  HandHeart,
+  ClipboardList,
+  CheckCircle2,
+} from "lucide-react";
 
 import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
@@ -18,6 +30,16 @@ interface Event {
   location: string;
   eventDate: string;
   creatorEmail: string;
+
+  // MongoDB থেকে আসবে
+  volunteerGuidelines?: string[];
+  participantsCount?: number;
+
+  creator?: {
+    name: string;
+    email: string;
+    image?: string;
+  } | null;
 }
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -34,16 +56,17 @@ export default function EventDetailsContent() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [joining, setJoining] = useState(false);
+
   const isMountedRef = useRef(false);
 
-  // Fetch event details
+  // Fetch Event Details
   useEffect(() => {
     let isMounted = true;
     isMountedRef.current = true;
 
     const fetchEvent = async () => {
       if (!eventId) {
-        setError("Event ID পাওয়া যায়নি");
+        setError("Event ID Not Found");
         setLoading(false);
         return;
       }
@@ -87,7 +110,7 @@ export default function EventDetailsContent() {
           setError(
             error instanceof Error
               ? error.message
-              : "Event details load করা যায়নি",
+              : "Event details load failed",
           );
         }
       } finally {
@@ -105,21 +128,26 @@ export default function EventDetailsContent() {
     };
   }, [eventId]);
 
-  // Join event
+  // Join Event
   const handleJoinEvent = async () => {
     if (isPending) {
-      toast.info("একটু অপেক্ষা করো...");
+      toast.info("Please Wait...");
       return;
     }
 
     if (!session?.user) {
-      toast.error("Join করতে আগে login করো");
+      toast.error("To Join Please Log In");
       router.push("/login");
       return;
     }
 
     if (!API_URL) {
       toast.error("API URL is not configured");
+      return;
+    }
+
+    if (!eventId) {
+      toast.error("Event Not Found");
       return;
     }
 
@@ -164,26 +192,54 @@ export default function EventDetailsContent() {
     }
   };
 
-  // Loading state
+  // Share Event
+  const handleShare = async () => {
+    try {
+      const shareUrl = window.location.href;
+
+      if (navigator.share) {
+        await navigator.share({
+          title: event?.title || "Community Event",
+          text: "Join this community event with me!",
+          url: shareUrl,
+        });
+      } else {
+        await navigator.clipboard.writeText(shareUrl);
+        toast.success("Event link copied!");
+      }
+    } catch (error) {
+      if (error instanceof Error && error.name !== "AbortError") {
+        try {
+          await navigator.clipboard.writeText(window.location.href);
+          toast.success("Event link copied!");
+        } catch {
+          toast.error("Could not share event link");
+        }
+      }
+    }
+  };
+
+  // Loading State
   if (loading) {
     return (
-      <div className="min-h-screen animate-pulse bg-background px-4 py-20">
-        <div className="mx-auto max-w-5xl">
-          <div className="mb-6 h-10 w-36 rounded-md bg-muted" />
-          <div className="h-96 rounded-2xl bg-muted" />
+      <div className="min-h-screen animate-pulse bg-background px-4 py-10">
+        <div className="mx-auto max-w-6xl">
+          <div className="mb-6 h-5 w-40 rounded bg-muted" />
+          <div className="h-80 rounded-2xl bg-muted sm:h-[420px]" />
+          <div className="mt-6 h-40 rounded-2xl bg-muted" />
         </div>
       </div>
     );
   }
 
-  // Error or event not found
+  // Error State
   if (error || !event) {
     return (
       <main className="flex min-h-[60vh] flex-col items-center justify-center bg-background px-4 text-center text-foreground">
         <h2 className="text-2xl font-bold">Event Not Found</h2>
 
         <p className="mt-3 max-w-md text-muted-foreground">
-          {error || "এই event-টি পাওয়া যায়নি।"}
+          {error || "Even Not Found"}
         </p>
 
         <Button onClick={() => router.push("/events")} className="mt-5">
@@ -194,97 +250,259 @@ export default function EventDetailsContent() {
     );
   }
 
-  // Check if event has ended
   const isPastEvent = new Date(event.eventDate).getTime() < Date.now();
 
+  const formattedDate = new Date(event.eventDate).toLocaleDateString("en-US", {
+    weekday: "short",
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
+
+  // Get guidelines from MongoDB
+  const guidelines = Array.isArray(event.volunteerGuidelines)
+    ? event.volunteerGuidelines.filter(
+        (item) => typeof item === "string" && item.trim().length > 0,
+      )
+    : [];
+
   return (
-    <main className="min-h-screen bg-background px-4 py-12 text-foreground">
-      <div className="mx-auto max-w-5xl">
-        <Button
-          variant="ghost"
+    <main className="min-h-screen bg-slate-50 px-3 py-5 text-slate-900 dark:bg-background dark:text-foreground sm:px-6 sm:py-8">
+      <div className="mx-auto max-w-6xl">
+        {/* Back Button */}
+        <button
           onClick={() => router.push("/events")}
-          className="mb-6"
+          className="mb-5 flex items-center gap-2 text-xs font-medium text-slate-500 transition hover:text-teal-600"
         >
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Back to Events
-        </Button>
+          <ArrowLeft className="h-3.5 w-3.5" />
+          Back to Upcoming Events
+        </button>
 
-        <article className="overflow-hidden rounded-3xl border border-border bg-card text-card-foreground shadow-sm">
-          {/* Event image */}
-          <div className="h-64 sm:h-96">
-            <img
-              src={event.image}
-              alt={event.title}
-              className="h-full w-full object-cover"
-            />
-          </div>
+        <article className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-border dark:bg-card">
+          {/* Hero Section */}
+          <div className="relative h-[280px] overflow-hidden sm:h-[360px] md:h-[400px]">
+            {event.image ? (
+              <img
+                src={event.image}
+                alt={event.title}
+                className="h-full w-full object-cover"
+              />
+            ) : (
+              <div className="h-full w-full bg-slate-200 dark:bg-muted" />
+            )}
 
-          <div className="p-6 sm:p-10">
-            <Badge className="mb-4 border-0 bg-teal-100 text-teal-700 hover:bg-teal-100 dark:bg-teal-950 dark:text-teal-300 dark:hover:bg-teal-950">
-              {event.category}
-            </Badge>
+            {/* Image Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-black/10" />
 
-            <h1 className="text-3xl font-bold text-card-foreground sm:text-4xl">
-              {event.title}
-            </h1>
-
-            {/* Event information */}
-            <div className="mt-6 flex flex-col gap-4 text-muted-foreground sm:flex-row sm:gap-8">
-              <div className="flex items-center gap-2">
-                <CalendarDays className="h-5 w-5 text-teal-600 dark:text-teal-300" />
-
-                {new Date(event.eventDate).toLocaleDateString("en-US", {
-                  day: "numeric",
-                  month: "long",
-                  year: "numeric",
-                })}
-              </div>
-
-              <div className="flex items-center gap-2">
-                <MapPin className="h-5 w-5 text-teal-600 dark:text-teal-300" />
-                {event.location}
-              </div>
+            {/* Category */}
+            <div className="absolute left-5 top-5">
+              <Badge className="border-0 bg-white px-3 py-1 text-xs font-semibold text-slate-800 hover:bg-white">
+                <HandHeart className="mr-1.5 h-3.5 w-3.5 text-teal-600" />
+                {event.category}
+              </Badge>
             </div>
 
-            <div className="my-8 border-t border-border" />
+            {/* Hero Information */}
+            <div className="absolute bottom-0 left-0 w-full p-5 sm:p-8">
+              <h1 className="max-w-3xl text-2xl font-extrabold text-white sm:text-3xl md:text-4xl">
+                {event.title}
+              </h1>
 
-            {/* Description */}
-            <h2 className="mb-4 text-2xl font-bold text-card-foreground">
-              About This Event
-            </h2>
+              <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs font-medium text-white/90">
+                <span className="flex items-center gap-1.5">
+                  <MapPin className="h-4 w-4 text-teal-400" />
+                  {event.location}
+                </span>
 
-            <p className="whitespace-pre-line leading-8 text-muted-foreground">
-              {event.description}
-            </p>
+                <span className="flex items-center gap-1.5">
+                  <CalendarDays className="h-4 w-4 text-teal-400" />
+                  {formattedDate}
+                </span>
+              </div>
+            </div>
+          </div>
 
-            {/* Join event section */}
-            <div className="mt-10 rounded-2xl border border-teal-200 bg-teal-50 p-6 dark:border-teal-900 dark:bg-teal-950/60">
+          <div className="p-4 sm:p-7 md:p-8">
+            {/* Volunteer Count and Join Bar */}
+            <div className="mb-8 flex flex-col gap-4 rounded-xl border border-slate-200 bg-slate-50 p-4 dark:border-border dark:bg-muted/30 sm:flex-row sm:items-center sm:justify-between sm:px-5">
               <div className="flex items-center gap-3">
-                <Users className="h-6 w-6 text-teal-700 dark:text-teal-300" />
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-teal-100 text-teal-700 dark:bg-teal-950 dark:text-teal-300">
+                  <Users className="h-5 w-5" />
+                </div>
 
                 <div>
-                  <h3 className="font-semibold text-foreground">
-                    Be Part of the Change
-                  </h3>
+                  <p className="text-sm font-bold text-slate-800 dark:text-foreground">
+                    {event.participantsCount ?? 0} Volunteers Joined
+                  </p>
 
-                  <p className="mt-1 text-sm text-muted-foreground">
-                    Join this event and make a positive impact in your
-                    community.
+                  <p className="text-xs text-slate-500 dark:text-muted-foreground">
+                    Sign up to join hands for this drive
                   </p>
                 </div>
               </div>
 
-              <Button
-                onClick={handleJoinEvent}
-                disabled={joining || isPastEvent}
-                className="mt-5 w-full bg-teal-600 text-white hover:bg-teal-700 sm:w-auto"
-              >
-                {isPastEvent
-                  ? "Event Has Ended"
-                  : joining
-                    ? "Joining..."
-                    : "Join This Event"}
-              </Button>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={handleShare}
+                  className="h-10 w-10 shrink-0 border-slate-200 bg-white dark:border-border dark:bg-card"
+                  aria-label="Share event"
+                >
+                  <Share2 className="h-4 w-4" />
+                </Button>
+
+                <Button
+                  onClick={handleJoinEvent}
+                  disabled={joining || isPastEvent || isPending}
+                  className="h-10 flex-1 bg-teal-600 px-5 text-white hover:bg-teal-700 sm:flex-none"
+                >
+                  <HandHeart className="mr-2 h-4 w-4" />
+
+                  {isPastEvent
+                    ? "Event Ended"
+                    : joining
+                      ? "Joining..."
+                      : "Join Event"}
+                </Button>
+              </div>
+            </div>
+
+            {/* Main Content Grid */}
+            <div className="grid grid-cols-1 gap-8 md:grid-cols-[minmax(0,1fr)_280px] md:gap-10">
+              {/* Left Side */}
+              <div className="min-w-0">
+                {/* About Section */}
+                <section>
+                  <h2 className="text-lg font-bold text-slate-900 dark:text-foreground">
+                    About this Social Initiative
+                  </h2>
+
+                  <p className="mt-3 whitespace-pre-line border-b border-slate-200 pb-6 text-sm leading-7 text-slate-600 dark:border-border dark:text-muted-foreground">
+                    {event.description}
+                  </p>
+                </section>
+
+                {/* Volunteer Guidelines */}
+                <section className="mt-6">
+                  <div className="mb-4 flex items-center gap-2">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-teal-50 text-teal-700 dark:bg-teal-950 dark:text-teal-300">
+                      <ClipboardList className="h-4 w-4" />
+                    </div>
+
+                    <h2 className="text-sm font-bold uppercase tracking-wide text-slate-800 dark:text-foreground">
+                      Volunteer Guidelines
+                    </h2>
+                  </div>
+
+                  {guidelines.length > 0 ? (
+                    <ul className="space-y-3">
+                      {guidelines.map((guideline, index) => (
+                        <li
+                          key={index}
+                          className="flex items-start gap-2.5 text-xs leading-6 text-slate-600 dark:text-muted-foreground"
+                        >
+                          <CheckCircle2 className="mt-1 h-3.5 w-3.5 shrink-0 text-teal-600 dark:text-teal-400" />
+
+                          <span>{guideline}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p className="rounded-lg bg-slate-50 p-4 text-xs leading-6 text-slate-500 dark:bg-muted/30 dark:text-muted-foreground">
+                      No volunteer guidelines have been added for this event
+                      yet. Please follow the organizer's instructions.
+                    </p>
+                  )}
+                </section>
+              </div>
+
+              {/* Right Side - Organizer Card */}
+              <aside>
+                <div className="rounded-xl border border-slate-200 bg-white p-4 dark:border-border dark:bg-card">
+                  <h3 className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-muted-foreground">
+                    Initiative Organizer
+                  </h3>
+
+                  <div className="mt-4 flex items-center gap-3">
+                    <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full border border-slate-200 bg-slate-100 dark:border-border dark:bg-muted">
+                      {event.creator?.image ? (
+                        <img
+                          src={event.creator.image}
+                          alt={event.creator.name || "Organizer"}
+                          className="h-full w-full object-cover"
+                        />
+                      ) : (
+                        <UserRound className="h-6 w-6 text-teal-600" />
+                      )}
+                    </div>
+
+                    <div className="min-w-0">
+                      <h4 className="truncate text-sm font-bold text-slate-900 dark:text-foreground">
+                        {event.creator?.name || "Community Organizer"}
+                      </h4>
+
+                      <p className="mt-1 flex items-center gap-1 break-all text-[10px] text-slate-500 dark:text-muted-foreground">
+                        <Mail className="h-3 w-3 shrink-0" />
+                        {event.creator?.email || event.creatorEmail}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="mt-4 border-t border-slate-200 pt-3 dark:border-border">
+                    <div className="flex items-center gap-2 text-[11px] text-teal-700 dark:text-teal-400">
+                      <ShieldCheck className="h-4 w-4" />
+                      <span>Verified Platform Member</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Event Reminder */}
+                <div className="mt-4 rounded-xl border border-teal-100 bg-teal-50/70 p-4 dark:border-teal-900 dark:bg-teal-950/30">
+                  <div className="flex items-center gap-2">
+                    <HandHeart className="h-4 w-4 text-teal-700 dark:text-teal-300" />
+
+                    <h3 className="text-xs font-bold text-teal-900 dark:text-teal-200">
+                      Make a Difference
+                    </h3>
+                  </div>
+
+                  <p className="mt-2 text-xs leading-5 text-teal-800/80 dark:text-teal-300/80">
+                    Your time and effort can make a real difference in someone's
+                    life.
+                  </p>
+                </div>
+              </aside>
+            </div>
+
+            {/* Bottom Join Section */}
+            <div className="mt-9 rounded-xl border border-slate-200 bg-slate-50 p-5 dark:border-border dark:bg-muted/30">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <h3 className="font-bold text-slate-900 dark:text-foreground">
+                    Be Part of the Change
+                  </h3>
+
+                  <p className="mt-1 text-xs leading-5 text-slate-500 dark:text-muted-foreground">
+                    Join this initiative and make a positive impact in your
+                    community.
+                  </p>
+                </div>
+
+                <Button
+                  onClick={handleJoinEvent}
+                  disabled={joining || isPastEvent || isPending}
+                  className="bg-teal-600 px-6 text-white hover:bg-teal-700"
+                >
+                  <HandHeart className="mr-2 h-4 w-4" />
+
+                  {isPastEvent
+                    ? "Event Has Ended"
+                    : joining
+                      ? "Joining..."
+                      : "Join This Event"}
+                </Button>
+              </div>
             </div>
           </div>
         </article>

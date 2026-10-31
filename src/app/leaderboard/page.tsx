@@ -1,7 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { apiFetch } from "@/lib/api";
+import { useRouter } from "next/navigation";
+import { authClient } from "@/lib/auth-client";
+
+import { Trophy, Loader2, AlertCircle, Medal } from "lucide-react";
 
 type Leader = {
   name: string;
@@ -13,19 +16,58 @@ type Leader = {
 type LeaderboardResponse = {
   success: boolean;
   leaderboard: Leader[];
+  message?: string;
 };
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
 export default function LeaderboardPage() {
+  const router = useRouter();
+
+  const { data: session, isPending } = authClient.useSession();
+
   const [leaders, setLeaders] = useState<Leader[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    async function loadLeaderboard() {
+    if (isPending) return;
+
+    if (!session?.user) {
+      router.push("/login");
+      return;
+    }
+
+    const loadLeaderboard = async () => {
       try {
-        const result = await apiFetch<LeaderboardResponse>(
-          "/api/impact/leaderboard",
-        );
+        setLoading(true);
+        setError("");
+
+        if (!API_URL) {
+          throw new Error("API URL is not configured");
+        }
+
+        // Get JWT token
+        const { data, error: tokenError } = await authClient.token();
+
+        if (tokenError || !data?.token) {
+          throw new Error("Authentication token not found");
+        }
+
+        // Fetch leaderboard with JWT
+        const response = await fetch(`${API_URL}/api/impact/leaderboard`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${data.token}`,
+          },
+          cache: "no-store",
+        });
+
+        const result: LeaderboardResponse = await response.json();
+
+        if (!response.ok) {
+          throw new Error(result.message || "Failed to load leaderboard");
+        }
 
         setLeaders(result.leaderboard || []);
       } catch (err) {
@@ -35,43 +77,64 @@ export default function LeaderboardPage() {
       } finally {
         setLoading(false);
       }
-    }
+    };
 
     loadLeaderboard();
-  }, []);
+  }, [session, isPending, router]);
+
+  if (isPending || loading) {
+    return (
+      <div className="flex min-h-[70vh] items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-emerald-600" />
+      </div>
+    );
+  }
 
   return (
     <main className="min-h-screen bg-gray-50 px-4 py-10 sm:px-6 lg:px-10">
       <div className="mx-auto max-w-5xl">
+        {/* Header */}
         <div className="mb-8">
           <p className="font-semibold text-emerald-600">ShobaiMile</p>
 
-          <h1 className="mt-2 text-3xl font-bold text-gray-900">
-            Volunteer Leaderboard
-          </h1>
+          <div className="mt-2 flex items-center gap-3">
+            <Trophy className="h-8 w-8 text-emerald-600" />
+
+            <h1 className="text-3xl font-bold text-gray-900">
+              Volunteer Leaderboard
+            </h1>
+          </div>
 
           <p className="mt-2 text-gray-500">
             See how volunteers are making a positive impact.
           </p>
         </div>
 
-        {loading && (
-          <p className="py-10 text-center text-gray-500">
-            Loading leaderboard...
-          </p>
-        )}
-
+        {/* Error */}
         {error && (
-          <div className="rounded-xl bg-red-50 p-4 text-red-600">{error}</div>
-        )}
-
-        {!loading && !error && leaders.length === 0 && (
-          <div className="rounded-2xl bg-white p-8 text-center text-gray-500 shadow-sm">
-            No leaderboard data available yet.
+          <div className="flex items-center gap-3 rounded-xl bg-red-50 p-4 text-red-600">
+            <AlertCircle className="h-5 w-5 shrink-0" />
+            <p>{error}</p>
           </div>
         )}
 
-        {!loading && !error && leaders.length > 0 && (
+        {/* Empty State */}
+        {!error && leaders.length === 0 && (
+          <div className="rounded-2xl bg-white p-8 text-center shadow-sm">
+            <Trophy className="mx-auto h-12 w-12 text-gray-300" />
+
+            <h2 className="mt-4 text-xl font-semibold text-gray-800">
+              No leaderboard data available yet.
+            </h2>
+
+            <p className="mt-2 text-gray-500">
+              Complete volunteer events to appear on the leaderboard.
+            </p>
+          </div>
+        )}
+
+        {/* Leaderboard Table */}
+        {!error && leaders.length > 0 && (
           <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
             <div className="overflow-x-auto">
               <table className="w-full min-w-[650px] text-left">
@@ -91,28 +154,35 @@ export default function LeaderboardPage() {
                       key={`${leader.name}-${index}`}
                       className="transition hover:bg-gray-50"
                     >
+                      {/* Rank */}
                       <td className="px-6 py-4 font-bold text-emerald-600">
-                        {index + 1 === 1
-                          ? "🥇"
-                          : index + 1 === 2
-                            ? "🥈"
-                            : index + 1 === 3
-                              ? "🥉"
-                              : `#${index + 1}`}
+                        {index === 0 ? (
+                          <span className="text-xl">🥇</span>
+                        ) : index === 1 ? (
+                          <span className="text-xl">🥈</span>
+                        ) : index === 2 ? (
+                          <span className="text-xl">🥉</span>
+                        ) : (
+                          `#${index + 1}`
+                        )}
                       </td>
 
+                      {/* Volunteer */}
                       <td className="px-6 py-4 font-semibold text-gray-900">
                         {leader.name}
                       </td>
 
+                      {/* Points */}
                       <td className="px-6 py-4 font-semibold text-gray-900">
                         {leader.totalPoints}
                       </td>
 
+                      {/* Hours */}
                       <td className="px-6 py-4 text-gray-600">
                         {leader.volunteerHours}
                       </td>
 
+                      {/* Events */}
                       <td className="px-6 py-4 text-gray-600">
                         {leader.completedEvents}
                       </td>

@@ -34,6 +34,7 @@ import {
 
 export default function Navbar() {
   const router = useRouter();
+
   const { data: session, isPending } = authClient.useSession();
   const { resolvedTheme, setTheme } = useTheme();
 
@@ -58,6 +59,7 @@ export default function Navbar() {
       }
 
       toast.success("Logged out successfully");
+
       router.replace("/");
       router.refresh();
     } catch {
@@ -133,7 +135,7 @@ export default function Navbar() {
                 <DropdownMenu>
                   <DropdownMenuTrigger className="group flex items-center gap-2 rounded-xl border border-border bg-card p-1 pr-2.5 outline-none transition hover:border-cyan-500/50 hover:bg-muted">
                     {/* Avatar */}
-                    <div className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-full bg-gradient-to-br from-cyan-400 to-blue-600 text-white">
+                    <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-gradient-to-br from-cyan-400 to-blue-600 text-white">
                       {user.image ? (
                         <img
                           src={user.image}
@@ -145,11 +147,15 @@ export default function Navbar() {
                       )}
                     </div>
 
-                    <span className="hidden max-w-24 truncate text-sm font-semibold sm:block">
+                    {/* Full Username on Hover */}
+                    <span
+                      className="max-w-0 overflow-hidden whitespace-nowrap text-sm font-semibold opacity-0 transition-all duration-300 group-hover:max-w-[300px] group-hover:opacity-100"
+                      title={user.name || "My Account"}
+                    >
                       {user.name || "My Account"}
                     </span>
 
-                    <ChevronDown className="h-3.5 w-3.5 text-muted-foreground transition-transform group-data-[state=open]:rotate-180" />
+                    <ChevronDown className="h-3.5 w-3.5 shrink-0 text-muted-foreground transition-transform group-data-[state=open]:rotate-180" />
                   </DropdownMenuTrigger>
 
                   <DropdownMenuContent
@@ -175,6 +181,7 @@ export default function Navbar() {
                         <p className="truncate text-sm font-semibold">
                           {user.name || "User"}
                         </p>
+
                         <p className="truncate text-xs text-muted-foreground">
                           {user.email}
                         </p>
@@ -250,7 +257,7 @@ export default function Navbar() {
 
                     <DropdownMenuSeparator className="my-1" />
 
-                    {/* Dropdown Logout */}
+                    {/* Logout */}
                     <DropdownMenuItem
                       disabled={loggingOut}
                       className={`${menuItemClass} text-red-600 focus:bg-red-50 focus:text-red-600 dark:text-red-400 dark:focus:bg-red-500/10 dark:focus:text-red-400`}
@@ -261,33 +268,15 @@ export default function Navbar() {
                       ) : (
                         <LogOut className="h-4 w-4" />
                       )}
+
                       {loggingOut ? "Logging out..." : "Logout"}
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
-
-                {/* Separate Logout */}
-                <button
-                  type="button"
-                  onClick={handleLogout}
-                  disabled={loggingOut}
-                  title="Logout"
-                  aria-label="Logout"
-                  className="flex h-9 items-center justify-center gap-1.5 rounded-lg border border-red-200 bg-red-50 px-2.5 text-red-600 transition hover:bg-red-100 disabled:opacity-60 dark:border-red-500/20 dark:bg-red-500/10 dark:text-red-400 dark:hover:bg-red-500/20"
-                >
-                  {loggingOut ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
-                    <LogOut className="h-4 w-4" />
-                  )}
-
-                  <span className="hidden text-xs font-semibold sm:inline">
-                    Logout
-                  </span>
-                </button>
               </div>
             ) : (
               <>
+                {/* Login */}
                 <Link
                   href="/login"
                   className="rounded-lg px-3 py-2 text-sm font-semibold text-muted-foreground transition hover:bg-muted hover:text-cyan-600"
@@ -295,6 +284,7 @@ export default function Navbar() {
                   Login
                 </Link>
 
+                {/* Register */}
                 <Link
                   href="/register"
                   className="rounded-lg bg-cyan-600 px-3.5 py-2 text-sm font-semibold text-white transition hover:bg-cyan-700"

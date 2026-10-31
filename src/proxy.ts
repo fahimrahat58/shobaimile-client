@@ -25,5 +25,6 @@ export const config = {
     "/profile/:path*",
     "/certificates/:path*",
     "/dashboard/:path*",
+    "/leaderboard/:path*",
   ],
 };

@@ -11,7 +11,7 @@ type ImpactData = {
   volunteerHours: number;
   completedEvents: number;
   badge: string;
-  nextMilestone: number;
+  nextMilestone: number | null;
   pointsToNextMilestone: number;
 };
 
@@ -29,6 +29,7 @@ export default function ImpactPage() {
     async function loadImpact() {
       try {
         const result = await apiFetch<ImpactResponse>("/api/impact/me");
+
         setImpact(result.impact);
       } catch (err) {
         setError(

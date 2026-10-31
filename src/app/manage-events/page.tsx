@@ -28,6 +28,16 @@ import {
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
+const ALLOWED_CATEGORIES = [
+  "Cleanup",
+  "Plantation",
+  "Donation",
+  "Education",
+  "Food Support",
+  "Animal Welfare",
+  "Other",
+];
+
 interface Event {
   _id: string;
   title: string;
@@ -37,6 +47,7 @@ interface Event {
   location: string;
   eventDate: string;
   creatorEmail: string;
+  volunteerGuidelines?: string[];
 }
 
 interface Participant {
@@ -66,7 +77,12 @@ export default function ManageEventsPage() {
 
   const [editingEvent, setEditingEvent] = useState<Event | null>(null);
   const [formData, setFormData] = useState(initialFormData);
+  const [volunteerGuidelines, setVolunteerGuidelines] = useState<string[]>([
+    "",
+  ]);
+
   const [saving, setSaving] = useState(false);
+  const [minDate, setMinDate] = useState("");
 
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [confirmingDeleteId, setConfirmingDeleteId] = useState<string | null>(
@@ -80,6 +96,20 @@ export default function ManageEventsPage() {
 
   const [hoursInput, setHoursInput] = useState<Record<string, string>>({});
   const [verifyingEmail, setVerifyingEmail] = useState<string | null>(null);
+
+  // Get tomorrow's local date
+  useEffect(() => {
+    const date = new Date();
+    date.setDate(date.getDate() + 1);
+
+    const tomorrow = [
+      date.getFullYear(),
+      String(date.getMonth() + 1).padStart(2, "0"),
+      String(date.getDate()).padStart(2, "0"),
+    ].join("-");
+
+    setMinDate(tomorrow);
+  }, []);
 
   // Get authentication token
   const getToken = useCallback(async () => {
@@ -136,18 +166,133 @@ export default function ManageEventsPage() {
     fetchEvents();
   }, [fetchEvents]);
 
+  // Validate image URL
+  const isValidImageURL = (value: string) => {
+    try {
+      const url = new URL(value);
+
+      return (
+        (url.protocol === "http:" || url.protocol === "https:") &&
+        url.hostname.includes(".")
+      );
+    } catch {
+      return false;
+    }
+  };
+
+  // Validate edit form
+  const validateForm = () => {
+    const title = formData.title.trim();
+    const description = formData.description.trim();
+    const category = formData.category.trim();
+    const image = formData.image.trim();
+    const location = formData.location.trim();
+
+    if (title.length < 3) {
+      toast.error("Event title must be at least 3 characters");
+      return false;
+    }
+
+    if (title.length > 100) {
+      toast.error("Event title cannot exceed 100 characters");
+      return false;
+    }
+
+    if (description.length < 10) {
+      toast.error("Description must be at least 10 characters");
+      return false;
+    }
+
+    if (description.length > 2000) {
+      toast.error("Description cannot exceed 2000 characters");
+      return false;
+    }
+
+    if (!ALLOWED_CATEGORIES.includes(category)) {
+      toast.error("Please select a valid event category");
+      return false;
+    }
+
+    if (!image) {
+      toast.error("Please enter an event image URL");
+      return false;
+    }
+
+    if (!isValidImageURL(image)) {
+      toast.error("Please enter a valid HTTP or HTTPS image URL");
+      return false;
+    }
+
+    if (location.length < 3) {
+      toast.error("Location must be at least 3 characters");
+      return false;
+    }
+
+    if (location.length > 200) {
+      toast.error("Location cannot exceed 200 characters");
+      return false;
+    }
+
+    if (!formData.eventDate || !minDate) {
+      toast.error("Please select an event date");
+      return false;
+    }
+
+    if (formData.eventDate < minDate) {
+      toast.error("Only tomorrow and future dates are allowed");
+      return false;
+    }
+
+    // Validate guidelines
+    const cleanedGuidelines = volunteerGuidelines.map((item) => item.trim());
+
+    if (
+      cleanedGuidelines.length === 0 ||
+      cleanedGuidelines.every((item) => !item)
+    ) {
+      toast.error("Please add at least one volunteer guideline");
+      return false;
+    }
+
+    if (cleanedGuidelines.some((item) => !item)) {
+      toast.error("Please fill in or remove empty guidelines");
+      return false;
+    }
+
+    if (cleanedGuidelines.length > 10) {
+      toast.error("Maximum 10 guidelines allowed");
+      return false;
+    }
+
+    if (cleanedGuidelines.some((item) => item.length < 3)) {
+      toast.error("Each guideline must be at least 3 characters");
+      return false;
+    }
+
+    if (cleanedGuidelines.some((item) => item.length > 200)) {
+      toast.error("Each guideline cannot exceed 200 characters");
+      return false;
+    }
+
+    return true;
+  };
+
   // Open edit dialog
   const openEditDialog = (event: Event) => {
     setEditingEvent(event);
 
     setFormData({
-      title: event.title,
-      description: event.description,
-      category: event.category,
-      image: event.image,
-      location: event.location,
-      eventDate: new Date(event.eventDate).toISOString().slice(0, 10),
+      title: event.title || "",
+      description: event.description || "",
+      category: event.category || "",
+      image: event.image || "",
+      location: event.location || "",
+      eventDate: event.eventDate ? event.eventDate.slice(0, 10) : "",
     });
+
+    setVolunteerGuidelines(
+      event.volunteerGuidelines?.length ? [...event.volunteerGuidelines] : [""],
+    );
   };
 
   // Close edit dialog
@@ -156,6 +301,7 @@ export default function ManageEventsPage() {
 
     setEditingEvent(null);
     setFormData(initialFormData);
+    setVolunteerGuidelines([""]);
   };
 
   // Handle form changes
@@ -170,19 +316,47 @@ export default function ManageEventsPage() {
     }));
   };
 
+  // Handle guideline changes
+  const handleGuidelineChange = (index: number, value: string) => {
+    setVolunteerGuidelines((prev) =>
+      prev.map((item, i) => (i === index ? value : item)),
+    );
+  };
+
+  // Add guideline
+  const addGuideline = () => {
+    if (volunteerGuidelines.length >= 10) {
+      toast.error("Maximum 10 guidelines allowed");
+      return;
+    }
+
+    setVolunteerGuidelines((prev) => [...prev, ""]);
+  };
+
+  // Remove guideline
+  const removeGuideline = (index: number) => {
+    setVolunteerGuidelines((prev) => prev.filter((_, i) => i !== index));
+  };
+
   // Update event
   const handleUpdate = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (saving) return;
 
     if (!editingEvent || !API_URL) {
       toast.error("Unable to update event");
       return;
     }
 
+    if (!validateForm()) return;
+
     try {
       setSaving(true);
 
       const token = await getToken();
+
+      const cleanedGuidelines = volunteerGuidelines.map((item) => item.trim());
 
       const response = await fetch(
         `${API_URL}/api/events/${editingEvent._id}`,
@@ -192,7 +366,15 @@ export default function ManageEventsPage() {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify(formData),
+          body: JSON.stringify({
+            ...formData,
+            title: formData.title.trim(),
+            description: formData.description.trim(),
+            category: formData.category.trim(),
+            image: formData.image.trim(),
+            location: formData.location.trim(),
+            volunteerGuidelines: cleanedGuidelines,
+          }),
         },
       );
 
@@ -206,6 +388,7 @@ export default function ManageEventsPage() {
 
       setEditingEvent(null);
       setFormData(initialFormData);
+      setVolunteerGuidelines([""]);
 
       await fetchEvents();
     } catch (error) {
@@ -323,7 +506,7 @@ export default function ManageEventsPage() {
 
     const hours = Number(hoursInput[userEmail]);
 
-    if (!Number.isFinite(hours) || hours <= 0 || hours > 24) {
+    if (!Number.isFinite(hours) || hours < 1 || hours > 24) {
       toast.error("Enter volunteer hours between 1 and 24");
       return;
     }
@@ -355,7 +538,9 @@ export default function ManageEventsPage() {
       }
 
       toast.success(
-        `Attendance verified! ${result.totalPoints ?? result.record?.totalPoints ?? ""} points awarded.`,
+        `Attendance verified! ${
+          result.totalPoints ?? result.record?.totalPoints ?? ""
+        } points awarded.`,
       );
 
       setHoursInput((prev) => ({
@@ -363,7 +548,6 @@ export default function ManageEventsPage() {
         [userEmail]: "",
       }));
 
-      // Refresh participant list
       await fetchParticipants(selectedEvent);
     } catch (error) {
       toast.error(
@@ -374,6 +558,7 @@ export default function ManageEventsPage() {
     }
   };
 
+  // Loading screen
   if (loading) {
     return (
       <main className="flex min-h-[70vh] items-center justify-center">
@@ -447,7 +632,6 @@ export default function ManageEventsPage() {
                 key={event._id}
                 className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm"
               >
-                {/* Event Image */}
                 <div className="h-52 overflow-hidden bg-gray-100">
                   <img
                     src={event.image}
@@ -513,7 +697,6 @@ export default function ManageEventsPage() {
                     </div>
                   ) : (
                     <div className="mt-6 space-y-3">
-                      {/* Edit and Delete */}
                       <div className="flex gap-3">
                         <button
                           onClick={() => openEditDialog(event)}
@@ -532,7 +715,6 @@ export default function ManageEventsPage() {
                         </button>
                       </div>
 
-                      {/* Manage Participants */}
                       <button
                         onClick={() => fetchParticipants(event)}
                         className="flex w-full items-center justify-center gap-2 rounded-lg bg-cyan-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-cyan-700"
@@ -574,21 +756,31 @@ export default function ManageEventsPage() {
             </div>
 
             <form onSubmit={handleUpdate} className="space-y-4">
+              {/* Event Title */}
               <div>
                 <label className="mb-2 block text-sm font-semibold text-gray-700">
                   Event Title
                 </label>
 
                 <input
+                  type="text"
                   name="title"
                   value={formData.title}
                   onChange={handleChange}
+                  placeholder="Enter event title"
                   required
+                  minLength={3}
                   maxLength={100}
-                  className="w-full rounded-lg border border-gray-200 px-4 py-3 outline-none focus:border-cyan-600"
+                  disabled={saving}
+                  className="w-full rounded-lg border border-gray-200 px-4 py-3 outline-none focus:border-cyan-600 disabled:bg-gray-100"
                 />
+
+                <p className="mt-1 text-xs text-gray-500">
+                  3-100 characters required.
+                </p>
               </div>
 
+              {/* Description */}
               <div>
                 <label className="mb-2 block text-sm font-semibold text-gray-700">
                   Description
@@ -598,13 +790,84 @@ export default function ManageEventsPage() {
                   name="description"
                   value={formData.description}
                   onChange={handleChange}
+                  placeholder="Describe your event..."
                   rows={4}
                   required
+                  minLength={10}
                   maxLength={2000}
-                  className="w-full rounded-lg border border-gray-200 px-4 py-3 outline-none focus:border-cyan-600"
+                  disabled={saving}
+                  className="w-full rounded-lg border border-gray-200 px-4 py-3 outline-none focus:border-cyan-600 disabled:bg-gray-100"
                 />
+
+                <p className="mt-1 text-xs text-gray-500">
+                  10-2000 characters required.
+                </p>
               </div>
 
+              {/* Volunteer Guidelines */}
+              <div className="rounded-xl border border-cyan-100 bg-cyan-50/40 p-5">
+                <div className="mb-3 flex items-center justify-between">
+                  <label className="block text-sm font-semibold text-gray-700">
+                    Volunteer Guidelines
+                  </label>
+
+                  <span className="text-xs text-gray-500">
+                    {volunteerGuidelines.length}/10
+                  </span>
+                </div>
+
+                <div className="space-y-3">
+                  {volunteerGuidelines.map((guideline, index) => (
+                    <div key={index} className="flex items-center gap-2">
+                      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-cyan-100 text-sm font-bold text-cyan-700">
+                        {index + 1}
+                      </span>
+
+                      <input
+                        type="text"
+                        value={guideline}
+                        onChange={(e) =>
+                          handleGuidelineChange(index, e.target.value)
+                        }
+                        placeholder={`Guideline ${index + 1}`}
+                        minLength={3}
+                        maxLength={200}
+                        required
+                        disabled={saving}
+                        className="min-w-0 flex-1 rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm outline-none focus:border-cyan-600 disabled:bg-gray-100"
+                      />
+
+                      {volunteerGuidelines.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => removeGuideline(index)}
+                          disabled={saving}
+                          className="rounded-lg border border-red-200 p-3 text-red-600 transition hover:bg-red-50 disabled:opacity-50"
+                          aria-label={`Remove guideline ${index + 1}`}
+                        >
+                          <Trash2 size={18} />
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+
+                <button
+                  type="button"
+                  onClick={addGuideline}
+                  disabled={saving || volunteerGuidelines.length >= 10}
+                  className="mt-4 inline-flex items-center gap-2 rounded-lg border border-cyan-600 px-4 py-2 text-sm font-semibold text-cyan-700 transition hover:bg-cyan-100 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  <Plus size={16} />
+                  Add Guideline
+                </button>
+
+                <p className="mt-2 text-xs text-gray-500">
+                  Add 1-10 guidelines. Each must contain 3-200 characters.
+                </p>
+              </div>
+
+              {/* Category */}
               <div>
                 <label className="mb-2 block text-sm font-semibold text-gray-700">
                   Category
@@ -615,7 +878,8 @@ export default function ManageEventsPage() {
                   value={formData.category}
                   onChange={handleChange}
                   required
-                  className="w-full rounded-lg border border-gray-200 bg-white px-4 py-3 outline-none focus:border-cyan-600"
+                  disabled={saving}
+                  className="w-full rounded-lg border border-gray-200 bg-white px-4 py-3 outline-none focus:border-cyan-600 disabled:bg-gray-100"
                 >
                   <option value="">Select a category</option>
                   <option value="Cleanup">Cleanup</option>
@@ -628,6 +892,7 @@ export default function ManageEventsPage() {
                 </select>
               </div>
 
+              {/* Image URL */}
               <div>
                 <label className="mb-2 block text-sm font-semibold text-gray-700">
                   Image URL
@@ -638,28 +903,45 @@ export default function ManageEventsPage() {
                   name="image"
                   value={formData.image}
                   onChange={handleChange}
+                  placeholder="https://example.com/image.jpg"
                   required
-                  className="w-full rounded-lg border border-gray-200 px-4 py-3 outline-none focus:border-cyan-600"
+                  disabled={saving}
+                  className="w-full rounded-lg border border-gray-200 px-4 py-3 outline-none focus:border-cyan-600 disabled:bg-gray-100"
                 />
+
+                <p className="mt-1 text-xs text-gray-500">
+                  Enter a valid HTTP or HTTPS image URL.
+                </p>
               </div>
 
+              {/* Location */}
               <div>
                 <label className="mb-2 block text-sm font-semibold text-gray-700">
                   Location
                 </label>
 
                 <input
+                  type="text"
                   name="location"
                   value={formData.location}
                   onChange={handleChange}
+                  placeholder="Enter event location"
                   required
+                  minLength={3}
                   maxLength={200}
-                  className="w-full rounded-lg border border-gray-200 px-4 py-3 outline-none focus:border-cyan-600"
+                  disabled={saving}
+                  className="w-full rounded-lg border border-gray-200 px-4 py-3 outline-none focus:border-cyan-600 disabled:bg-gray-100"
                 />
+
+                <p className="mt-1 text-xs text-gray-500">
+                  3-200 characters required.
+                </p>
               </div>
 
+              {/* Event Date */}
               <div>
-                <label className="mb-2 block text-sm font-semibold text-gray-700">
+                <label className="mb-2 flex items-center gap-2 text-sm font-semibold text-gray-700">
+                  <CalendarDays size={17} />
                   Event Date
                 </label>
 
@@ -668,26 +950,32 @@ export default function ManageEventsPage() {
                   name="eventDate"
                   value={formData.eventDate}
                   onChange={handleChange}
-                  min={new Date().toISOString().slice(0, 10)}
+                  min={minDate}
                   required
-                  className="w-full rounded-lg border border-gray-200 px-4 py-3 outline-none focus:border-cyan-600"
+                  disabled={saving || !minDate}
+                  className="w-full rounded-lg border border-gray-200 px-4 py-3 outline-none focus:border-cyan-600 disabled:cursor-not-allowed disabled:bg-gray-100"
                 />
+
+                <p className="mt-2 text-xs text-gray-500">
+                  Only tomorrow and future dates are allowed.
+                </p>
               </div>
 
+              {/* Buttons */}
               <div className="flex flex-col-reverse gap-3 pt-2 sm:flex-row sm:justify-end">
                 <button
                   type="button"
                   onClick={closeEditDialog}
                   disabled={saving}
-                  className="rounded-lg border border-gray-200 px-5 py-3 font-semibold text-gray-700 hover:bg-gray-50"
+                  className="rounded-lg border border-gray-200 px-5 py-3 font-semibold text-gray-700 hover:bg-gray-50 disabled:opacity-50"
                 >
                   Cancel
                 </button>
 
                 <button
                   type="submit"
-                  disabled={saving}
-                  className="flex items-center justify-center gap-2 rounded-lg bg-cyan-600 px-5 py-3 font-semibold text-white hover:bg-cyan-700 disabled:opacity-60"
+                  disabled={saving || !minDate}
+                  className="flex items-center justify-center gap-2 rounded-lg bg-cyan-600 px-5 py-3 font-semibold text-white hover:bg-cyan-700 disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   {saving ? (
                     <>
@@ -695,7 +983,10 @@ export default function ManageEventsPage() {
                       Updating...
                     </>
                   ) : (
-                    "Save Changes"
+                    <>
+                      <Pencil size={18} />
+                      Save Changes
+                    </>
                   )}
                 </button>
               </div>
@@ -743,6 +1034,7 @@ export default function ManageEventsPage() {
               <div className="mb-5 grid grid-cols-2 gap-3">
                 <div className="rounded-xl bg-cyan-50 p-4">
                   <p className="text-sm text-cyan-700">Total Participants</p>
+
                   <p className="mt-1 text-2xl font-bold text-cyan-900">
                     {participants.length}
                   </p>
@@ -750,6 +1042,7 @@ export default function ManageEventsPage() {
 
                 <div className="rounded-xl bg-green-50 p-4">
                   <p className="text-sm text-green-700">Verified</p>
+
                   <p className="mt-1 text-2xl font-bold text-green-900">
                     {participants.filter((p) => p.verified).length}
                   </p>

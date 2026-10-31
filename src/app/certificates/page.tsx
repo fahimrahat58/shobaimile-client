@@ -1,7 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
+import { toast } from "sonner";
+import { Loader2, FileX, AlertCircle } from "lucide-react";
+
 import CertificateCard from "@/components/certificates/CertificateCard";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
@@ -18,25 +22,48 @@ type CertificatesResponse = {
   success: boolean;
   count: number;
   certificates: Certificate[];
+  message?: string;
 };
 
 export default function CertificatesPage() {
+  const router = useRouter();
+
+  const { data: session, isPending } = authClient.useSession();
+
   const [certificates, setCertificates] = useState<Certificate[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [downloading, setDownloading] = useState("");
 
-  useEffect(() => {
-    async function loadCertificates() {
-      try {
-        const tokenResult = await authClient.token();
-        const token = tokenResult.data?.token;
+  // Get JWT token
+  const getToken = async () => {
+    const { data, error } = await authClient.token();
 
-        if (!token) {
-          throw new Error("Please login first.");
-        }
+    if (error || !data?.token) {
+      throw new Error("Please login first.");
+    }
+
+    return data.token;
+  };
+
+  // Load certificates
+  useEffect(() => {
+    if (isPending) return;
+
+    if (!session?.user) {
+      router.push("/login");
+      return;
+    }
+
+    const loadCertificates = async () => {
+      try {
+        setLoading(true);
+        setError("");
+
+        const token = await getToken();
 
         const response = await fetch(`${API_URL}/api/certificates/me`, {
+          method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -46,7 +73,7 @@ export default function CertificatesPage() {
         const result: CertificatesResponse = await response.json();
 
         if (!response.ok) {
-          throw new Error("Certificates load করা যায়নি।");
+          throw new Error(result.message || "Certificates load করা যায়নি।");
         }
 
         setCertificates(result.certificates || []);
@@ -55,25 +82,24 @@ export default function CertificatesPage() {
       } finally {
         setLoading(false);
       }
-    }
+    };
 
     loadCertificates();
-  }, []);
+  }, [session, isPending, router]);
 
+  // Download certificate PDF
   async function handleDownload(certificateId: string) {
     try {
       setDownloading(certificateId);
 
-      const tokenResult = await authClient.token();
-      const token = tokenResult.data?.token;
-
-      if (!token) {
-        throw new Error("Please login first.");
-      }
+      const token = await getToken();
 
       const response = await fetch(
-        `${API_URL}/api/certificates/${encodeURIComponent(certificateId)}/download`,
+        `${API_URL}/api/certificates/${encodeURIComponent(
+          certificateId,
+        )}/download`,
         {
+          method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -81,10 +107,20 @@ export default function CertificatesPage() {
       );
 
       if (!response.ok) {
-        throw new Error("Certificate download করা যায়নি।");
+        let message = "Certificate download করা যায়নি।";
+
+        try {
+          const result = await response.json();
+          message = result.message || message;
+        } catch {
+          // Response may not contain JSON.
+        }
+
+        throw new Error(message);
       }
 
       const blob = await response.blob();
+
       const fileUrl = URL.createObjectURL(blob);
 
       const link = document.createElement("a");
@@ -95,17 +131,32 @@ export default function CertificatesPage() {
       link.click();
       link.remove();
 
-      URL.revokeObjectURL(fileUrl);
+      // Release browser memory after download starts.
+      setTimeout(() => {
+        URL.revokeObjectURL(fileUrl);
+      }, 1000);
+
+      toast.success("Certificate downloaded successfully!");
     } catch (err) {
-      alert(err instanceof Error ? err.message : "Download failed.");
+      toast.error(err instanceof Error ? err.message : "Download failed.");
     } finally {
       setDownloading("");
     }
   }
 
+  // Session loading
+  if (isPending || loading) {
+    return (
+      <div className="flex min-h-[70vh] items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-emerald-600" />
+      </div>
+    );
+  }
+
   return (
     <main className="min-h-screen bg-gray-50 px-4 py-10 sm:px-6 lg:px-10">
       <div className="mx-auto max-w-7xl">
+        {/* Header */}
         <div className="mb-8">
           <p className="font-semibold text-emerald-600">ShobaiMile</p>
 
@@ -118,19 +169,18 @@ export default function CertificatesPage() {
           </p>
         </div>
 
-        {loading && (
-          <p className="py-10 text-center text-gray-500">
-            Loading certificates...
-          </p>
-        )}
-
+        {/* Error */}
         {error && (
-          <div className="rounded-xl bg-red-50 p-4 text-red-600">{error}</div>
+          <div className="flex items-center gap-3 rounded-xl bg-red-50 p-4 text-red-600">
+            <AlertCircle className="h-5 w-5 shrink-0" />
+            <p>{error}</p>
+          </div>
         )}
 
-        {!loading && !error && certificates.length === 0 && (
+        {/* Empty State */}
+        {!error && certificates.length === 0 && (
           <div className="rounded-2xl border border-gray-200 bg-white p-10 text-center shadow-sm">
-            <div className="text-5xl">📜</div>
+            <FileX className="mx-auto h-12 w-12 text-gray-300" />
 
             <h2 className="mt-4 text-xl font-bold text-gray-900">
               No Certificates Yet
@@ -143,7 +193,8 @@ export default function CertificatesPage() {
           </div>
         )}
 
-        {!loading && !error && certificates.length > 0 && (
+        {/* Certificates */}
+        {!error && certificates.length > 0 && (
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
             {certificates.map((certificate) => (
               <div key={certificate.certificateId}>
