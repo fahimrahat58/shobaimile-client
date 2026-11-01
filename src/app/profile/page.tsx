@@ -71,6 +71,8 @@ export default function ProfilePage() {
       return;
     }
 
+    let cancelled = false;
+
     const fetchProfile = async () => {
       try {
         if (!API_URL) {
@@ -93,17 +95,27 @@ export default function ProfilePage() {
           throw new Error(result.message || "Failed to fetch profile");
         }
 
-        setProfile(result.user);
+        if (!cancelled) {
+          setProfile(result.user);
+        }
       } catch (error) {
-        toast.error(
-          error instanceof Error ? error.message : "Something went wrong",
-        );
+        if (!cancelled) {
+          toast.error(
+            error instanceof Error ? error.message : "Something went wrong",
+          );
+        }
       } finally {
-        setLoading(false);
+        if (!cancelled) {
+          setLoading(false);
+        }
       }
     };
 
     fetchProfile();
+
+    return () => {
+      cancelled = true;
+    };
   }, [session, isPending, router]);
 
   const openEditDialog = () => {
@@ -154,11 +166,24 @@ export default function ProfilePage() {
         throw new Error(result.message || "Profile update failed");
       }
 
-      setProfile(result.user);
+      if (!result.user) {
+        throw new Error("Updated profile data not found");
+      }
 
-      toast.success("Profile updated successfully!");
+      // Update profile immediately without refreshing the page.
+      setProfile({
+        name: result.user.name,
+        email: result.user.email,
+        image: result.user.image,
+        emailVerified: result.user.emailVerified,
+      });
+
+      setName(result.user.name);
+      setImage(result.user.image);
 
       setIsEditOpen(false);
+
+      toast.success("Profile updated successfully!");
     } catch (error) {
       toast.error(
         error instanceof Error ? error.message : "Something went wrong",
@@ -213,7 +238,11 @@ export default function ProfilePage() {
           <div className="px-4 pb-6 sm:px-6 sm:pb-8">
             <div className="-mt-12 flex flex-col items-start justify-between gap-4 sm:-mt-14 sm:flex-row sm:items-end">
               <Avatar className="h-24 w-24 border-4 border-background sm:h-28 sm:w-28">
-                <AvatarImage src={profile.image || ""} alt={profile.name} />
+                <AvatarImage
+                  src={profile.image || ""}
+                  alt={profile.name}
+                  key={profile.image}
+                />
 
                 <AvatarFallback className="text-xl sm:text-2xl">
                   {initials}
@@ -325,12 +354,17 @@ export default function ProfilePage() {
               </div>
 
               <div className="space-y-2">
-                <Label>Email Address</Label>
+                <Label htmlFor="email">Email Address</Label>
 
                 <div className="relative">
                   <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
 
-                  <Input value={profile.email} disabled className="pl-10" />
+                  <Input
+                    id="email"
+                    value={profile.email}
+                    disabled
+                    className="pl-10"
+                  />
                 </div>
 
                 <p className="text-xs text-muted-foreground">
