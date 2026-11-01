@@ -64,23 +64,14 @@ export default function EventDetailsContent() {
   const [hasJoined, setHasJoined] = useState(false);
   const [checkingJoined, setCheckingJoined] = useState(true);
 
-  // Current date/time
   const [currentTime, setCurrentTime] = useState(Date.now());
-
-  // ================= FETCH EVENT =================
 
   useEffect(() => {
     let active = true;
 
     const fetchEvent = async () => {
-      if (!eventId) {
-        setError("Event ID not found");
-        setLoading(false);
-        return;
-      }
-
-      if (!API_URL) {
-        setError("API URL is not configured");
+      if (!eventId || !API_URL) {
+        setError(!eventId ? "Event ID not found" : "API URL is not configured");
         setLoading(false);
         return;
       }
@@ -106,6 +97,11 @@ export default function EventDetailsContent() {
           throw new Error(data.message || "Failed to load event");
         }
 
+        const rawCount =
+          data.event.participantsCount ??
+          data.event.volunteersCount ??
+          data.event.volunteerCount;
+
         const eventData: Event = {
           ...data.event,
           category:
@@ -113,6 +109,10 @@ export default function EventDetailsContent() {
             data.event.category.trim()
               ? data.event.category.trim()
               : "Community",
+          participantsCount:
+            typeof rawCount === "number" && Number.isFinite(rawCount)
+              ? rawCount
+              : 0,
         };
 
         if (active) {
@@ -141,8 +141,6 @@ export default function EventDetailsContent() {
       active = false;
     };
   }, [eventId]);
-
-  // ================= CHECK JOINED EVENT =================
 
   useEffect(() => {
     let active = true;
@@ -212,8 +210,6 @@ export default function EventDetailsContent() {
     };
   }, [eventId, session?.user?.email, isPending]);
 
-  // ================= JOIN EVENT =================
-
   const handleJoinEvent = async () => {
     if (isPending) {
       toast.info("Please wait...");
@@ -231,16 +227,13 @@ export default function EventDetailsContent() {
       return;
     }
 
-    if (joining || checkingJoined) {
-      return;
-    }
+    if (joining || checkingJoined) return;
 
     if (!API_URL || !eventId) {
       toast.error("Event information not found");
       return;
     }
 
-    // Prevent joining past events
     if (event && new Date(event.eventDate).getTime() < Date.now()) {
       toast.error("This event has already ended");
       return;
@@ -269,7 +262,6 @@ export default function EventDetailsContent() {
 
       const data = await response.json();
 
-      // Already joined
       if (response.status === 409) {
         setHasJoined(true);
         toast.info("You have already joined this event");
@@ -280,21 +272,24 @@ export default function EventDetailsContent() {
         throw new Error(data.message || "Failed to join event");
       }
 
-      // Update joined status
       setHasJoined(true);
 
-      // Update volunteer count
-      setEvent((previous) =>
-        previous
-          ? {
-              ...previous,
-              participantsCount:
-                typeof data.participantsCount === "number"
-                  ? data.participantsCount
-                  : (previous.participantsCount ?? 0) + 1,
-            }
-          : previous,
-      );
+      setEvent((previous) => {
+        if (!previous) return previous;
+
+        const serverCount =
+          data.participantsCount ??
+          data.event?.participantsCount ??
+          data.volunteersCount;
+
+        return {
+          ...previous,
+          participantsCount:
+            typeof serverCount === "number" && Number.isFinite(serverCount)
+              ? serverCount
+              : (previous.participantsCount ?? 0) + 1,
+        };
+      });
 
       toast.success("Successfully joined as a volunteer!");
     } catch (error) {
@@ -307,8 +302,6 @@ export default function EventDetailsContent() {
       setJoining(false);
     }
   };
-
-  // ================= SHARE EVENT =================
 
   const handleShare = async () => {
     try {
@@ -336,8 +329,6 @@ export default function EventDetailsContent() {
     }
   };
 
-  // ================= LOADING =================
-
   if (loading) {
     return (
       <div className="min-h-screen animate-pulse bg-background px-3 py-6 sm:px-6 sm:py-10">
@@ -349,8 +340,6 @@ export default function EventDetailsContent() {
       </div>
     );
   }
-
-  // ================= ERROR =================
 
   if (error || !event) {
     return (
@@ -371,8 +360,6 @@ export default function EventDetailsContent() {
       </main>
     );
   }
-
-  // ================= EVENT STATUS =================
 
   const eventTimestamp = new Date(event.eventDate).getTime();
 
@@ -405,13 +392,9 @@ export default function EventDetailsContent() {
           ? "Joining..."
           : "Join Event";
 
-  // ================= UI =================
-
   return (
     <main className="min-h-screen bg-slate-50 px-3 py-5 text-slate-900 dark:bg-background dark:text-foreground sm:px-6 sm:py-8 lg:px-10">
       <div className="mx-auto w-full max-w-6xl">
-        {/* Back Button */}
-
         <button
           onClick={() => router.push("/events")}
           className="mb-4 flex items-center gap-2 text-xs font-medium text-slate-500 transition hover:text-teal-600 sm:mb-5 sm:text-sm"
@@ -421,16 +404,12 @@ export default function EventDetailsContent() {
         </button>
 
         <article className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm sm:rounded-2xl dark:border-border dark:bg-card">
-          {/* Category */}
-
           <div className="px-3 pt-3 sm:px-6 sm:pt-6">
             <span className="inline-flex items-center gap-1.5 rounded-full border border-teal-100 bg-teal-50 px-3 py-1.5 text-xs font-semibold text-teal-800 dark:border-teal-900 dark:bg-teal-950 dark:text-teal-200">
               <HandHeart className="h-4 w-4" />
               {event.category || "Community"}
             </span>
           </div>
-
-          {/* Event Image */}
 
           <div className="relative isolate h-[240px] overflow-hidden sm:h-[360px] md:h-[420px] lg:h-[460px]">
             {event.image ? (
@@ -485,8 +464,6 @@ export default function EventDetailsContent() {
               </div>
 
               <div className="flex w-full items-center gap-2 sm:w-auto">
-                {/* Share Button */}
-
                 <Button
                   variant="outline"
                   size="icon"
@@ -496,8 +473,6 @@ export default function EventDetailsContent() {
                 >
                   <Share2 className="h-4 w-4" />
                 </Button>
-
-                {/* Join Button */}
 
                 <Button
                   onClick={handleJoinEvent}
@@ -516,11 +491,7 @@ export default function EventDetailsContent() {
             </div>
 
             <div className="grid grid-cols-1 gap-6 sm:gap-8 md:grid-cols-[minmax(0,1fr)_280px] md:gap-10">
-              {/* Main Content */}
-
               <div className="min-w-0">
-                {/* Description */}
-
                 <section>
                   <h2 className="text-base font-bold text-slate-900 sm:text-lg dark:text-foreground">
                     About this Social Initiative
@@ -530,8 +501,6 @@ export default function EventDetailsContent() {
                     {event.description}
                   </p>
                 </section>
-
-                {/* Guidelines */}
 
                 <section className="mt-6 sm:mt-7">
                   <div className="mb-4 flex items-center gap-2">
@@ -566,11 +535,7 @@ export default function EventDetailsContent() {
                 </section>
               </div>
 
-              {/* Sidebar */}
-
               <aside className="min-w-0">
-                {/* Organizer */}
-
                 <div className="rounded-xl border border-slate-200 bg-white p-3 sm:p-4 dark:border-border dark:bg-card">
                   <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-muted-foreground">
                     Initiative Organizer
@@ -609,8 +574,6 @@ export default function EventDetailsContent() {
                   </div>
                 </div>
 
-                {/* Make Difference */}
-
                 <div className="mt-4 rounded-xl border border-teal-100 bg-teal-50/70 p-3 sm:p-4 dark:border-teal-900 dark:bg-teal-950/30">
                   <div className="flex items-center gap-2">
                     <HandHeart className="h-4 w-4 text-teal-700 dark:text-teal-300" />
@@ -628,8 +591,6 @@ export default function EventDetailsContent() {
               </aside>
             </div>
 
-            {/* Bottom Join Section */}
-
             <div className="mt-6 rounded-xl border border-slate-200 bg-slate-50 p-3 sm:mt-9 sm:p-5 dark:border-border dark:bg-muted/30">
               <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div>
@@ -642,8 +603,6 @@ export default function EventDetailsContent() {
                     community.
                   </p>
                 </div>
-
-                {/* Same Join Function */}
 
                 <Button
                   onClick={handleJoinEvent}
