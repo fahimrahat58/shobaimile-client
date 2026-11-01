@@ -24,6 +24,7 @@ import {
   Award,
   Clock,
   Mail,
+  Eye,
 } from "lucide-react";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -108,7 +109,7 @@ export default function ManageEventsPage() {
 
     setMinDate(tomorrow);
   }, []);
-  // Get authentication token
+
   const getToken = useCallback(async () => {
     const tokenResult = await authClient.token();
     const token = tokenResult.data?.token;
@@ -687,10 +688,18 @@ export default function ManageEventsPage() {
                       </div>
                     ) : (
                       <div className="mt-6 space-y-3">
-                        <div className="flex flex-col gap-2 sm:flex-row sm:gap-3">
+                        <div className="grid grid-cols-3 gap-2 sm:gap-3">
+                          <Link
+                            href={`/events/${event._id}`}
+                            className="flex items-center justify-center gap-1.5 rounded-lg border border-blue-200 px-2 py-2.5 text-sm font-semibold text-blue-600 transition hover:bg-blue-50"
+                          >
+                            <Eye size={16} />
+                            View
+                          </Link>
+
                           <button
                             onClick={() => openEditDialog(event)}
-                            className="flex flex-1 items-center justify-center gap-2 rounded-lg border border-cyan-600 px-3 py-2.5 text-sm font-semibold text-cyan-700 transition hover:bg-cyan-50"
+                            className="flex items-center justify-center gap-1.5 rounded-lg border border-cyan-600 px-2 py-2.5 text-sm font-semibold text-cyan-700 transition hover:bg-cyan-50"
                           >
                             <Pencil size={16} />
                             Edit
@@ -698,7 +707,7 @@ export default function ManageEventsPage() {
 
                           <button
                             onClick={() => setConfirmingDeleteId(event._id)}
-                            className="flex flex-1 items-center justify-center gap-2 rounded-lg border border-red-200 px-3 py-2.5 text-sm font-semibold text-red-600 transition hover:bg-red-50"
+                            className="flex items-center justify-center gap-1.5 rounded-lg border border-red-200 px-2 py-2.5 text-sm font-semibold text-red-600 transition hover:bg-red-50"
                           >
                             <Trash2 size={16} />
                             Delete

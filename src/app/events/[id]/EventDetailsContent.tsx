@@ -19,7 +19,6 @@ import {
 import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 
 interface Event {
   _id: string;
@@ -64,6 +63,9 @@ export default function EventDetailsContent() {
   const [joining, setJoining] = useState(false);
   const [hasJoined, setHasJoined] = useState(false);
   const [checkingJoined, setCheckingJoined] = useState(true);
+  const [currentTime, setCurrentTime] = useState<number | null>(() =>
+    Date.now(),
+  );
 
   const isMountedRef = useRef(false);
 
@@ -107,8 +109,17 @@ export default function EventDetailsContent() {
           throw new Error(data.message || "Event data not found");
         }
 
+        const eventData: Event = {
+          ...data.event,
+          category:
+            typeof data.event.category === "string" &&
+            data.event.category.trim()
+              ? data.event.category.trim()
+              : "Community",
+        };
+
         if (isMounted) {
-          setEvent(data.event);
+          setEvent(eventData);
         }
       } catch (error) {
         console.error("Event details error:", error);
@@ -264,6 +275,7 @@ export default function EventDetailsContent() {
 
       if (isMountedRef.current) {
         setHasJoined(true);
+
         setEvent((previous) =>
           previous
             ? {
@@ -332,7 +344,7 @@ export default function EventDetailsContent() {
         <h2 className="text-xl font-bold sm:text-2xl">Event Not Found</h2>
 
         <p className="mt-3 max-w-md break-words text-sm text-muted-foreground sm:text-base">
-          {error || "Even Not Found"}
+          {error || "Event Not Found"}
         </p>
 
         <Button
@@ -346,7 +358,8 @@ export default function EventDetailsContent() {
     );
   }
 
-  const isPastEvent = new Date(event.eventDate).getTime() < Date.now();
+  const isPastEvent =
+    currentTime !== null && new Date(event.eventDate).getTime() < currentTime;
 
   const formattedDate = new Date(event.eventDate).toLocaleDateString("en-US", {
     weekday: "short",
@@ -386,27 +399,30 @@ export default function EventDetailsContent() {
         </button>
 
         <article className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm sm:rounded-2xl dark:border-border dark:bg-card">
-          <div className="relative h-[240px] overflow-hidden sm:h-[360px] md:h-[420px] lg:h-[460px]">
+          <div className="px-3 pt-3 sm:px-6 sm:pt-6">
+            <span className="inline-flex max-w-full items-center gap-1.5 rounded-full border border-teal-100 bg-teal-50 px-3 py-1.5 text-xs font-semibold text-teal-800 shadow-sm dark:border-teal-900 dark:bg-teal-950 dark:text-teal-200">
+              <HandHeart className="h-3.5 w-3.5 shrink-0 text-teal-600 dark:text-teal-400" />
+              <span className="break-words">
+                {event.category || "Community"}
+              </span>
+            </span>
+          </div>
+
+          <div className="relative isolate h-[240px] overflow-hidden sm:h-[360px] md:h-[420px] lg:h-[460px]">
             {event.image ? (
               <img
                 src={event.image}
                 alt={event.title}
-                className="h-full w-full object-cover"
+                className="absolute inset-0 h-full w-full object-cover"
               />
             ) : (
-              <div className="h-full w-full bg-slate-200 dark:bg-muted" />
+              <div className="absolute inset-0 h-full w-full bg-slate-200 dark:bg-muted" />
             )}
 
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-black/10" />
+            <div className="pointer-events-none absolute inset-0 z-10 bg-gradient-to-t from-black/80 via-black/20 to-black/10" />
 
-            <div className="absolute left-3 top-3 sm:left-5 sm:top-5">
-              <Badge className="border-0 bg-white px-2.5 py-1 text-[10px] font-semibold text-slate-800 hover:bg-white sm:px-3 sm:text-xs">
-                <HandHeart className="mr-1.5 h-3.5 w-3.5 text-teal-600" />
-                {event.category}
-              </Badge>
-            </div>
-
-            <div className="absolute bottom-0 left-0 w-full p-3 sm:p-6 md:p-8">
+            {/* Event title and details */}
+            <div className="absolute bottom-0 left-0 z-20 w-full p-3 sm:p-6 md:p-8">
               <h1 className="max-w-3xl break-words text-xl font-extrabold text-white sm:text-3xl md:text-4xl lg:text-5xl">
                 {event.title}
               </h1>
@@ -558,6 +574,7 @@ export default function EventDetailsContent() {
                   </div>
                 </div>
 
+                {/* Make a difference */}
                 <div className="mt-4 rounded-xl border border-teal-100 bg-teal-50/70 p-3 sm:p-4 dark:border-teal-900 dark:bg-teal-950/30">
                   <div className="flex items-center gap-2">
                     <HandHeart className="h-4 w-4 shrink-0 text-teal-700 dark:text-teal-300" />
@@ -575,6 +592,7 @@ export default function EventDetailsContent() {
               </aside>
             </div>
 
+            {/* Bottom join section */}
             <div className="mt-6 rounded-xl border border-slate-200 bg-slate-50 p-3 sm:mt-9 sm:p-5 dark:border-border dark:bg-muted/30">
               <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div className="min-w-0">
