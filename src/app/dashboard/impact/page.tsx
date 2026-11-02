@@ -17,8 +17,28 @@ type ImpactData = {
 
 type ImpactResponse = {
   success: boolean;
-  impact: ImpactData;
+  totalEvents: number;
+  totalHours: number;
+  totalPoints: number;
+  records: {
+    totalPoints?: number;
+    volunteerHours?: number;
+  }[];
 };
+
+function getBadge(totalPoints: number) {
+  if (totalPoints >= 500) return "Impact Champion";
+  if (totalPoints >= 250) return "Community Hero";
+  if (totalPoints >= 100) return "Dedicated Volunteer";
+  if (totalPoints >= 50) return "Active Volunteer";
+  return "Beginner";
+}
+
+function getNextMilestone(totalPoints: number) {
+  const milestones = [50, 100, 250, 500, 1000];
+
+  return milestones.find((milestone) => totalPoints < milestone) ?? null;
+}
 
 export default function ImpactPage() {
   const [impact, setImpact] = useState<ImpactData | null>(null);
@@ -30,7 +50,20 @@ export default function ImpactPage() {
       try {
         const result = await apiFetch<ImpactResponse>("/api/impact/me");
 
-        setImpact(result.impact);
+        const totalPoints = Number(result.totalPoints) || 0;
+        const volunteerHours = Number(result.totalHours) || 0;
+        const completedEvents = Number(result.totalEvents) || 0;
+        const nextMilestone = getNextMilestone(totalPoints);
+
+        setImpact({
+          totalPoints,
+          volunteerHours,
+          completedEvents,
+          badge: getBadge(totalPoints),
+          nextMilestone,
+          pointsToNextMilestone:
+            nextMilestone === null ? 0 : nextMilestone - totalPoints,
+        });
       } catch (err) {
         setError(
           err instanceof Error ? err.message : "Impact data load করা যায়নি।",

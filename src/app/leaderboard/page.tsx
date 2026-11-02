@@ -4,13 +4,14 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 
-import { Trophy, Loader2, AlertCircle, Medal } from "lucide-react";
+import { Trophy, Loader2, AlertCircle } from "lucide-react";
 
 type Leader = {
   name: string;
   totalPoints: number;
   volunteerHours: number;
-  completedEvents: number;
+  totalEvents: number;
+  completedEventNames: string[];
 };
 
 type LeaderboardResponse = {
@@ -180,9 +181,35 @@ export default function LeaderboardPage() {
                     <div className="rounded-lg bg-gray-50 p-3">
                       <p className="text-xs text-gray-500">Completed Events</p>
                       <p className="mt-1 text-lg font-bold text-gray-900">
-                        {leader.completedEvents}
+                        {leader.totalEvents}
                       </p>
                     </div>
+                  </div>
+
+                  <div className="mt-4 border-t border-gray-100 pt-4">
+                    <p className="mb-2 text-xs font-semibold text-gray-500 sm:text-sm">
+                      Completed Event Names
+                    </p>
+
+                    {leader.completedEventNames?.length > 0 ? (
+                      <ul className="space-y-2">
+                        {leader.completedEventNames.map(
+                          (eventName, eventIndex) => (
+                            <li
+                              key={`${eventName}-${eventIndex}`}
+                              className="flex items-start gap-2 text-sm text-gray-700"
+                            >
+                              <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-500" />
+                              <span className="break-words">{eventName}</span>
+                            </li>
+                          ),
+                        )}
+                      </ul>
+                    ) : (
+                      <p className="text-sm text-gray-400">
+                        No completed event names available.
+                      </p>
+                    )}
                   </div>
                 </article>
               ))}
@@ -197,7 +224,7 @@ export default function LeaderboardPage() {
                       <th className="px-5 py-4 lg:px-6">Volunteer</th>
                       <th className="px-5 py-4 lg:px-6">Points</th>
                       <th className="px-5 py-4 lg:px-6">Hours</th>
-                      <th className="px-5 py-4 lg:px-6">Events</th>
+                      <th className="px-5 py-4 lg:px-6">Completed Events</th>
                     </tr>
                   </thead>
 
@@ -231,8 +258,28 @@ export default function LeaderboardPage() {
                           {leader.volunteerHours}
                         </td>
 
-                        <td className="px-5 py-4 text-gray-600 lg:px-6">
-                          {leader.completedEvents}
+                        <td className="min-w-[260px] px-5 py-4 text-gray-600 lg:px-6">
+                          {leader.completedEventNames?.length > 0 ? (
+                            <ul className="space-y-2">
+                              {leader.completedEventNames.map(
+                                (eventName, eventIndex) => (
+                                  <li
+                                    key={`${eventName}-${eventIndex}`}
+                                    className="flex items-start gap-2 text-sm"
+                                  >
+                                    <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-500" />
+                                    <span className="break-words">
+                                      {eventName}
+                                    </span>
+                                  </li>
+                                ),
+                              )}
+                            </ul>
+                          ) : (
+                            <span className="text-sm text-gray-400">
+                              No completed event names available.
+                            </span>
+                          )}
                         </td>
                       </tr>
                     ))}
