@@ -118,9 +118,6 @@ export default function RegisterPage() {
               className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300"
             >
               Profile Image URL
-              <span className="ml-1 text-xs font-normal text-gray-400">
-                (Optional)
-              </span>
             </label>
 
             <input
