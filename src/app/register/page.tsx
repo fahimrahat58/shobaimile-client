@@ -129,13 +129,9 @@ export default function RegisterPage() {
               value={image}
               onChange={(e) => setImage(e.target.value)}
               placeholder="https://example.com/profile.jpg"
+              required
               className="w-full min-w-0 rounded-md border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 outline-none transition focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
             />
-
-            <p className="mt-1.5 text-xs leading-relaxed text-gray-500 dark:text-gray-400">
-              Add a profile image URL or leave it empty to use the default
-              avatar.
-            </p>
           </div>
 
           <div>
